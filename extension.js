@@ -18,8 +18,14 @@ function activate(context) {
         let sample = 'Hello MoMo!'
         // Display a message box to the user
         //vscode.window.showInformationMessage(sample);
-        const currentText = vscode.window.activeTextEditor.document;
+
+        // doc reference
+        // https://code.visualstudio.com/Docs/extensionAPI/vscode-api#Range
+        // https://code.visualstudio.com/Docs/extensionAPI/vscode-api
+        const currentText = vscode.window.activeTextEditor.document.
+        // const currentText =vscode.window.activeTextEditor.currentText;
         vscode.window.showInformationMessage(currentText.getText());
+
     });
 
     context.subscriptions.push(disposable);
