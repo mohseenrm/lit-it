@@ -1,0 +1,16 @@
+[
+	"TypeScript",
+	"La carpeta del área de trabajo contiene la versión {0} de TypeScript. ¿Quiere usar esta versión en lugar de la versión {1} del lote?",
+	"Usar área de trabajo ({0})",
+	"Usar empaquetado ({0})",
+	"No comprobar nunca la versión del área de trabajo",
+	"Cerrar",
+	"La configuración del área de trabajo de \"typescript.tsdk\" se actualizó a {0}.",
+	"La configuración del área de trabajo de \"typescript.check.workspaceVersion\" se actualizó a false.",
+	"La configuración del usuario de \"typescript.check.workspaceVersion\" se actualizó a false.",
+	"La ruta de acceso {0} no apunta a una instalación válida de tsserver. Las características del lenguaje TypeScript se deshabilitan.",
+	"personalizada",
+	"El servidor de lenguaje TypeScript no se pudo iniciar. El mensaje de error es: {0}",
+	"El servicio de lenguaje Typescript finalizó de forma inesperada cinco veces en los últimos cinco minutos. Considere la posibilidad de abrir un informe de errores.",
+	"El servicio de lenguaje TypeScript finalizó de forma inesperada cinco veces después de haberse iniciado y no se reiniciará. Abra un informe de errores."
+]

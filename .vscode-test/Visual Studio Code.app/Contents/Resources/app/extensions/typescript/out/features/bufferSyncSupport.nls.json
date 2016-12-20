@@ -1,0 +1,16 @@
+{
+	"messages": [
+		"Version mismatch! global tsc ({0}) != VS Code's language service ({1}). Inconsistent compile errors might occur",
+		"More Information",
+		"Don't Check Again",
+		"Close",
+		"Updated user setting 'typescript.check.tscVersion' to false"
+	],
+	"keys": [
+		"versionMismatch",
+		"moreInformation",
+		"doNotCheckAgain",
+		"close",
+		"updateTscCheck"
+	]
+}

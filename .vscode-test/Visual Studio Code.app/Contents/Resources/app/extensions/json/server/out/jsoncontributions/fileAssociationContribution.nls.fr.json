@@ -1,0 +1,6 @@
+[
+	"Fichiers avec extension",
+	"Mappez au langage ayant l'identificateur spécifié tous les fichiers dont le nom correspond au modèle Glob.",
+	"Fichiers avec chemin",
+	"Mappez au langage ayant l'identificateur spécifié tous les fichiers dont le chemin correspond au modèle Glob de chemin absolu."
+]

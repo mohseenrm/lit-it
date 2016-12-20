@@ -1,0 +1,16 @@
+[
+	"TypeScript",
+	"工作区文件夹包含 TypeScript 版本 {0}。是否要使用此版本而不是捆绑的版本 {1}?",
+	"使用工作区({0})",
+	"捆绑使用({0})",
+	"从不检查工作区版本",
+	"关闭",
+	"已将工作区设置 \"typescript.tsdk\" 更新为 {0}",
+	"已将工作区设置 \"typescript.check.workspaceVersion\" 更新为 false",
+	"已将用户设置 \"typescript.check.workspaceVersion\" 更新为 false",
+	"路径 {0} 未指向有效的 tsserver 安装。将禁用 TypeScript 语言功能。",
+	"自定义",
+	"无法启动 TypeScript 语言服务器。错误消息为: {0}",
+	"在过去 5 分钟内，TypeScript 语言服务意外中止了 5 次。请考虑启用 bug 报告。",
+	"TypeScript 语言服务在其启动后已中止 5 次。将不会重启该服务。请启用 bug 报告。"
+]

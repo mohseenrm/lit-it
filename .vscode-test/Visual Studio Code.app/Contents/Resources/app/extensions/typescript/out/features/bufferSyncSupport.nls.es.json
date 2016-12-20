@@ -1,0 +1,7 @@
+[
+	"Las versiones no coinciden; global tsc ({0}) != servicio de lenguaje de VS Code ({1}). Pueden producirse errores de compilación incoherente.",
+	"Más información",
+	"No volver a comprobar",
+	"Cerrar",
+	"La configuración del usuario de \"typescript.check.tscVersion\" se actualizó a false."
+]

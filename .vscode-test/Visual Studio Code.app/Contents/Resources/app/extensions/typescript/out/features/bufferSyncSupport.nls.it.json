@@ -1,0 +1,7 @@
+[
+	"Le versioni non corrispondono. Compilatore tsc globale ({0}) != servizio di linguaggio di Visual Studio Code ({1}). Potrebbero verificarsi errori di compilazione incoerente",
+	"Altre informazioni",
+	"Non eseguire più la verifica",
+	"Chiudi",
+	"L'impostazione utente 'typescript.check.tscVersion' è stata aggiornata ed è ora false"
+]
