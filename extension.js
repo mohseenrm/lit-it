@@ -59,6 +59,8 @@ function deactivate() {
 exports.deactivate = deactivate;
 
 const checkSignature = ( signature ) => {
-    return '';
+    if( signature.includes( 'function' ) )
+        return 'FUNCTION';
+    return 'ES6'
 }
 exports.checkSignature = checkSignature;
