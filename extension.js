@@ -1,5 +1,8 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
+/**
+ * Lit-it  : Add character to your JSDocs
+ * Author  : Mohseen Mukaddam [mohseenmukaddam6@gmail.com]
+ * License : Apache 2.0
+ */
 const vscode = require ('vscode' );
 const Range = vscode.Range;
 const Position = vscode.Position;
@@ -27,11 +30,12 @@ function activate(context) {
             const position = editor.selection.active;
             console.log( position );
             //test case if line is 1;
+            //get below line
             const requiredRange = new Range( ( position.line + 1 ), 0, ( position.line + 2 ), 0 );
-            // console.log( requiredRange );
+
             const textOfInterest = editor.document.getText( requiredRange );
             console.log( textOfInterest );
-
+            //insert this at current position
             const insertionText = new TextEdit( new Range( ( position.line ), 0, ( position.line + 1 ), 0 ), "Custom String inserted\n" );
 
             var workSpaceEdit = new vscode.WorkspaceEdit();
