@@ -55,7 +55,13 @@ describe("Doc String generation", () => {
         const signature = "() => {";
         const signature2 = "( velocity ) => {";
         const signature3 = "( velocity, distance ) => {";
-        const signature4 = "( x ) => { return x+1 };";
+        const signature4 = "const testES6 = ( x ) => { return x+1 };";
         const signature5 = "let x = (x) => x*3;";
+
+        expect( checkSignature( signature ) ).to.be.equal( 'ES6' );
+        expect( checkSignature( signature2 ) ).to.be.equal( 'ES6' );
+        expect( checkSignature( signature3 ) ).to.be.equal( 'ES6' );
+        expect( checkSignature( signature4 ) ).to.be.equal( 'ES6' );
+        expect( checkSignature( signature5 ) ).to.be.equal( 'ES6' );
     });
 });
