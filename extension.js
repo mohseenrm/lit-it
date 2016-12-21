@@ -56,6 +56,9 @@ exports.activate = activate;
 // this method is called when your extension is deactivated
 function deactivate() {
 }
-
-const checkSignature = () => {}
 exports.deactivate = deactivate;
+
+const checkSignature = ( signature ) => {
+    return '';
+}
+exports.checkSignature = checkSignature;
