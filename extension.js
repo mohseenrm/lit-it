@@ -41,6 +41,8 @@ function activate(context) {
             var workSpaceEdit = new vscode.WorkspaceEdit();
             workSpaceEdit.set( editor.document.uri, [ insertionText ] );
 
+            // console.log(functionDocString(''));
+
             vscode.workspace.applyEdit( workSpaceEdit );
         }
         else
@@ -57,7 +59,7 @@ exports.activate = activate;
 function deactivate() {
 }
 exports.deactivate = deactivate;
-//class, constructor, prototype
+//file signature
 const checkSignature = ( signature ) => {
     if( signature.includes( 'function' ) )
         return 'FUNCTION';
@@ -73,8 +75,27 @@ const checkSignature = ( signature ) => {
  * @param  {String} hyph  A hypen separating double names.
  * @return {String}       Properly formatted initials.
  */
+/**
+ * @author Jane Smith <jsmith@example.com>
+ */
+const functionDocString = ( signature ) => {
+    let template = ``;
+    template += `/**\n*@function `;
+    //get index of function add 8
+    //search for name 
+    // for(i = 0; i < 10; i++)
+    //     template += `${i+1}\n`;
+    let currentPosition = signature.indexOf( 'function' );
+    const endSlicePosition = signature.indexOf( '(' );
+    currentPosition += 8;
+    const name = signature.slice( currentPosition, endSlicePosition ).trim();
+    
+    template += `${(name === '') ? `{function name}\n` : `${name}\n`}`;
 
-const functionDocString = ( signature ) => {};
+    currentPosition = endSlicePosition;
+    
+    return template;
+};
 exports.functionDocString = functionDocString;
 
 exports.checkSignature = checkSignature;
