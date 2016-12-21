@@ -32,7 +32,7 @@ function activate(context) {
             const textOfInterest = editor.document.getText( requiredRange );
             console.log( textOfInterest );
 
-            const insertionText = new TextEdit( new Range( ( position.line ), 0, ( position.line + 1 ), 0 ), "Custom String inserted" );
+            const insertionText = new TextEdit( new Range( ( position.line ), 0, ( position.line + 1 ), 0 ), "Custom String inserted\n" );
 
             var workSpaceEdit = new vscode.WorkspaceEdit();
             workSpaceEdit.set( editor.document.uri, [ insertionText ] );
