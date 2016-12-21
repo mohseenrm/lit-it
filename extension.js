@@ -57,10 +57,24 @@ exports.activate = activate;
 function deactivate() {
 }
 exports.deactivate = deactivate;
-
+//class, constructor, prototype
 const checkSignature = ( signature ) => {
     if( signature.includes( 'function' ) )
         return 'FUNCTION';
-    return 'ES6'
+    return 'ES6';
 }
+/**
+ * Reduces a sequence of names to initials.
+ * @function makeInits
+ * @memberOf Helper.
+ * @param  {String} name  Space Delimited sequence of names.
+ * @param  {String} sep   A period separating the initials.
+ * @param  {String} trail A period ending the initials.
+ * @param  {String} hyph  A hypen separating double names.
+ * @return {String}       Properly formatted initials.
+ */
+
+const functionDocString = ( signature ) => {};
+exports.functionDocString = functionDocString;
+
 exports.checkSignature = checkSignature;
