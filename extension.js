@@ -1,7 +1,8 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 var vscode = require('vscode');
-
+const Range = require( 'vscode' ).Range;
+const Position = require( 'vscode' ).Position;
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 function activate(context) {
@@ -24,9 +25,14 @@ function activate(context) {
         const editor = vscode.window.activeTextEditor;
         // const currentText =vscode.window.activeTextEditor.currentText;
 
-        if(editor.selection.isEmpty){
+        if( editor.selection.isEmpty ){
             const position = editor.selection.active;
             console.log( position );
+            //test case if line is 1;
+            const requiredRange = new Range( ( position.line + 1 ), 0, ( position.line + 2 ), 0 );
+            // console.log( requiredRange );
+            const text = editor.document.getText(requiredRange);
+            console.log(text);
         }
         else
             vscode.window.showInformationMessage( 'Lit-it does not work with selection' );
