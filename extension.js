@@ -10,16 +10,13 @@ function activate(context) {
 
     // Use the console to output diagnostic information (console.log) and errors (console.error)
     // This line of code will only be executed once when your extension is activated
-    console.log('Congratulations, your extension "lit-it" is now active!');
+    console.log('Congratulations, your extension "Lit-it" is now active!');
 
     // The command has been defined in the package.json file
     // Now provide the implementation of the command with  registerCommand
     // The commandId parameter must match the command field in package.json
     var disposable = vscode.commands.registerCommand('extension.sayHello', function () {
-        // The code you place here will be executed every time your command is executed
-        let sample = 'Hello MoMo!';
-        // Display a message box to the user
-        //vscode.window.showInformationMessage(sample);
+        
         // doc reference
         // https://code.visualstudio.com/Docs/extensionAPI/vscode-api#Range
         // https://code.visualstudio.com/Docs/extensionAPI/vscode-api
@@ -34,6 +31,13 @@ function activate(context) {
             // console.log( requiredRange );
             const textOfInterest = editor.document.getText( requiredRange );
             console.log( textOfInterest );
+
+            const insertionText = new TextEdit( new Range( ( position.line ), 0, ( position.line + 1 ), 0 ), "Custom String inserted" );
+
+            var workSpaceEdit = new vscode.WorkspaceEdit();
+            workSpaceEdit.set( editor.document.uri, [ insertionText ] );
+
+            vscode.workspace.applyEdit( workSpaceEdit );
         }
         else
             vscode.window.showInformationMessage( 'Lit-it does not work with selection' );
