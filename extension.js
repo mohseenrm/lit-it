@@ -21,9 +21,16 @@ function activate(context) {
         // doc reference
         // https://code.visualstudio.com/Docs/extensionAPI/vscode-api#Range
         // https://code.visualstudio.com/Docs/extensionAPI/vscode-api
-        const currentText = vscode.window.activeTextEditor.document;
+        const editor = vscode.window.activeTextEditor;
         // const currentText =vscode.window.activeTextEditor.currentText;
-        vscode.window.showInformationMessage(currentText.getText());
+
+        if(editor.selection.isEmpty){
+            const position = editor.selection.active;
+            console.log( position );
+        }
+        else
+            vscode.window.showInformationMessage( 'Lit-it does not work with selection' );
+        // vscode.window.showInformationMessage(currentText.getText());
 
     });
 
