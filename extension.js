@@ -80,7 +80,7 @@ const checkSignature = ( signature ) => {
  */
 const functionDocString = ( signature ) => {
     let template = ``;
-    template += `/**\n*@function `;
+    template += `/**\n* @function `;
     //get index of function add 8
     //search for name 
     // for(i = 0; i < 10; i++)
@@ -92,17 +92,24 @@ const functionDocString = ( signature ) => {
     
     template += `${(name === '') ? `{function name}\n` : `${name}\n`}`;
 
-    currentPosition = endSlicePosition;
-    
-    //check if parameters
+    const parameters = extractParameters( signature );
 
-    return template;
+    if( parameters === 0 ){
+        template += `* @return {type} \t {description}\n*/`;
+        return template;
+    }
+    else{
+        let parameterString = parameters.map( param => `* @param {type} ${param} {description}\n` );
+        parameterString = parameterString.reduce( ( acc, curr ) => acc.concat( curr ) );
+        parameterString += `* @return {type} {description}\n*/`;
+        return( template.concat( parameterString ) );
+    }
 };
 exports.functionDocString = functionDocString;
 
 const extractParameters = ( signature ) => {
     const possibleParameters = signature.slice( signature.indexOf( '(' ) + 1, signature.indexOf( ')' ) ).trim();
-    return (possibleParameters === '') ? [] : possibleParameters.split(',').map( str => str.trim() );
+    return (possibleParameters === '') ? [] : possibleParameters.split( ',' ).map( str => str.trim() );
 };
 exports.extractParameters = extractParameters;
 
