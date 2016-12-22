@@ -15,7 +15,7 @@ UPDATE: now supports ES6 syntax.
  copy and paste code in command pallette
 
 ```sh
-ext code ...
+ext install lit-it
 ```
 
 ## Release Notes
