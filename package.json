@@ -2,34 +2,32 @@
   "name": "lit-it",
   "displayName": "lit-it",
   "description": "lazy JSdoc builder, add character to your code",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "publisher": "mohseenrm",
   "engines": {
     "vscode": "^1.5.0"
   },
-  "license":"SEE LICENSE IN LICENSE.txt",
+  "license": "SEE LICENSE IN LICENSE.txt",
   "bugs": {
-		"url": "https://github.com/mohseenrm/lit-it/issues"
-	},
+    "url": "https://github.com/mohseenrm/lit-it/issues"
+  },
   "repository": {
-		"type": "git",
-		"url": "https://github.com/mohseenrm/lit-it.git"
-	},
+    "type": "git",
+    "url": "https://github.com/mohseenrm/lit-it.git"
+  },
   "categories": [
-    "Other"
+    "Formatters", "Other"
   ],
   "activationEvents": [
     "onCommand:extension.litIt"
   ],
   "main": "./extension",
   "contributes": {
-    "commands": [
-      {
-        "command": "extension.litIt",
-        "title": "Lit it!",
-        "description": "Add JSdocs for your JS code"
-      }
-    ]
+    "commands": [{
+      "command": "extension.litIt",
+      "title": "Lit it!",
+      "description": "Add JSdocs for your JS code"
+    }]
   },
   "scripts": {
     "postinstall": "node ./node_modules/vscode/bin/install",
