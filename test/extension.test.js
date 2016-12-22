@@ -4,8 +4,9 @@ const vscode = require('vscode');
 const lit = require('../extension');
 const expect = require('chai').expect;
 
-const checkSignature = lit.checkSignature;
-const extractParameters = lit.extractParameters;
+const checkSignature = lit.checkSignature,
+      extractParameters = lit.extractParameters,
+      prettyParameters = lit.prettyParameters;
 
 describe("lit-it-core", () => {
     it("chai test", () => {
@@ -72,5 +73,17 @@ describe("Doc String generation", () => {
         expect( extractParameters( signature2 ) ).to.deep.equal( ['a', 'b', 'c'] );
         expect( extractParameters( signature3 ) ).to.deep.equal( [] );
         expect( extractParameters( signature4 ) ).to.deep.equal( ['x', 'y', 'z'] );     
+    });
+
+    it("pretty formatting", () => {
+        const signature = [];
+        const signature2 = ['param1', 'param', 'xz', 'x'];
+        const signature3 = ['xyz'];
+        const signature4 = ['first_parameter', 'a', 'param2'];
+
+        expect( prettyParameters( signature ) ).to.deep.equal( [] );
+        expect( prettyParameters( signature2 ) ).to.deep.equal( ['param1', 'param ', 'xz    ', 'x     '] );
+        expect( prettyParameters( signature ) ).to.deep.equal( ['xyz'] );
+        expect( prettyParameters( signature ) ).to.deep.equal( ['first_parameter', 'a              ', 'param2         '] );
     });
 });

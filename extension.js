@@ -117,4 +117,8 @@ const extractParameters = ( signature ) => {
 };
 exports.extractParameters = extractParameters;
 
+const prettyParameters = ( listOfParameters ) => {
+    return [];
+};
+exports.prettyParameters = prettyParameters;
 exports.checkSignature = checkSignature;
