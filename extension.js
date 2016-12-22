@@ -94,8 +94,15 @@ const functionDocString = ( signature ) => {
 
     currentPosition = endSlicePosition;
     
+    //check if parameters
+
     return template;
 };
 exports.functionDocString = functionDocString;
+
+const extractParameters = ( signature ) => {
+    return [];
+};
+exports.extractParameters = extractParameters;
 
 exports.checkSignature = checkSignature;

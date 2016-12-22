@@ -1,14 +1,11 @@
 /* global suite, test */
 
-var assert = require('assert');
-
-// You can import and use all API from the 'vscode' module as well as import
-// your extension to test it
 const vscode = require('vscode');
 const lit = require('../extension');
 const expect = require('chai').expect;
 
 const checkSignature = lit.checkSignature;
+const extractParameters = lit.extractParameters;
 
 describe("lit-it-core", () => {
     it("chai test", () => {
@@ -63,5 +60,17 @@ describe("Doc String generation", () => {
         expect( checkSignature( signature3 ) ).to.be.equal( 'ES6' );
         expect( checkSignature( signature4 ) ).to.be.equal( 'ES6' );
         expect( checkSignature( signature5 ) ).to.be.equal( 'ES6' );
+    });
+
+    it("check parameters", () => {
+        const signature = ' function fn1(){';
+        const signature2 = ' function fn2(a, b, c)';
+        const signature3 = ' () = {console.log();}';
+        const signature4 = ' (x, y, z)=>{return x+y+z;}';
+
+        expect( extractParameters( signature ) ).to.be.equal( [] );
+        expect( extractParameters( signature2 ) ).to.be.equal( ['a', 'b', 'c'] );
+        expect( extractParameters( signature3 ) ).to.be.equal( [] );
+        expect( extractParameters( signature4 ) ).to.be.equal( ['x', 'y', 'z'] );     
     });
 });
