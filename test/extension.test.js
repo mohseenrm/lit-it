@@ -68,9 +68,9 @@ describe("Doc String generation", () => {
         const signature3 = ' () = {console.log();}';
         const signature4 = ' (x, y, z)=>{return x+y+z;}';
 
-        expect( extractParameters( signature ) ).to.be.equal( [] );
-        expect( extractParameters( signature2 ) ).to.be.equal( ['a', 'b', 'c'] );
-        expect( extractParameters( signature3 ) ).to.be.equal( [] );
-        expect( extractParameters( signature4 ) ).to.be.equal( ['x', 'y', 'z'] );     
+        expect( extractParameters( signature ) ).to.deep.equal( [] );
+        expect( extractParameters( signature2 ) ).to.deep.equal( ['a', 'b', 'c'] );
+        expect( extractParameters( signature3 ) ).to.deep.equal( [] );
+        expect( extractParameters( signature4 ) ).to.deep.equal( ['x', 'y', 'z'] );     
     });
 });
