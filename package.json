@@ -2,7 +2,7 @@
   "name": "lit-it",
   "displayName": "lit-it",
   "description": "lazy js doc builder",
-  "version": "0.0.1",
+  "version": "1.0.1",
   "publisher": "mohseenrm",
   "engines": {
     "vscode": "^1.5.0"
@@ -11,14 +11,15 @@
     "Other"
   ],
   "activationEvents": [
-    "onCommand:extension.sayHello"
+    "onCommand:extension.litIt"
   ],
   "main": "./extension",
   "contributes": {
     "commands": [
       {
-        "command": "extension.sayHello",
-        "title": "Hello World"
+        "command": "extension.litIt",
+        "title": "Lit it!",
+        "description": "Add JSdocs for your JS code"
       }
     ]
   },
