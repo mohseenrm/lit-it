@@ -117,8 +117,22 @@ const extractParameters = ( signature ) => {
 };
 exports.extractParameters = extractParameters;
 
+const addPadding = ( string, max ) => {
+    if( string.length < max ){
+        let i = string.length
+        for( ; i < max; i++ )
+            string += ' ';
+        return string;
+    }
+    return string;
+};
+
 const prettyParameters = ( listOfParameters ) => {
-    return [];
+    const lengths = listOfParameters.map( str => str.length );
+    const max = Math.max.apply( null, lengths );
+
+    const mappingFunction = ( x ) => { return addPadding( x, max ) };
+    return listOfParameters.map( mappingFunction );
 };
 exports.prettyParameters = prettyParameters;
 exports.checkSignature = checkSignature;

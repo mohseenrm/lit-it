@@ -83,7 +83,7 @@ describe("Doc String generation", () => {
 
         expect( prettyParameters( signature ) ).to.deep.equal( [] );
         expect( prettyParameters( signature2 ) ).to.deep.equal( ['param1', 'param ', 'xz    ', 'x     '] );
-        expect( prettyParameters( signature ) ).to.deep.equal( ['xyz'] );
-        expect( prettyParameters( signature ) ).to.deep.equal( ['first_parameter', 'a              ', 'param2         '] );
+        expect( prettyParameters( signature3 ) ).to.deep.equal( ['xyz'] );
+        expect( prettyParameters( signature4 ) ).to.deep.equal( ['first_parameter', 'a              ', 'param2         '] );
     });
 });
