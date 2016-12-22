@@ -91,7 +91,7 @@ const functionDocString = ( signature ) => {
 
     const parameters = extractParameters( signature );
 
-    if( parameters === 0 ){
+    if( parameters.length === 0 ){
         template += `* @return {type} {description}\n*/\n`;
         return template;
     }
