@@ -86,16 +86,8 @@ const functionDocString = ( signature ) => {
     let template = ``;
     template += `/**\n* @function `;
 
-    let currentPosition = signature.indexOf( 'function' );
-    if( currentPosition === -1 )
-        template += `{function name}\n`;
-    else{
-        currentPosition += 8;
-        const endSlicePosition = signature.indexOf( '(' );
-    
-        const name = signature.slice( currentPosition, endSlicePosition ).trim();
-        template += `${(name === '') ? `{function name}\n` : `${name}\n`}`;
-    }
+    const name = extractFunctionName( signature );
+    template += `${(name === '') ? `{function name}\n` : `${name}\n`}`;
 
     const parameters = extractParameters( signature );
 
