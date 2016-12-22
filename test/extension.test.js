@@ -101,6 +101,6 @@ describe("Doc String generation", () => {
         expect( extractFunctionName( signature3 ) ).to.equal( 'customFn' );
         expect( extractFunctionName( signature4 ) ).to.equal( 'customFn' );
         expect( extractFunctionName( signature5 ) ).to.equal( 'customFn' );
-        expect( extractFunctionName( signature6 ) ).to.equal( '' );
+        expect( extractFunctionName( signature6 ) ).to.equal( 'x' );
     });
 });

@@ -36,6 +36,7 @@ function activate(context) {
             const textOfInterest = editor.document.getText( requiredRange );
             console.log( textOfInterest );
 
+            //generate docString
             const docString = functionDocString( textOfInterest );
 
             //insert this at current position
@@ -45,7 +46,7 @@ function activate(context) {
             workSpaceEdit.set( editor.document.uri, [ insertionText ] );
 
             // console.log(functionDocString(''));
-
+            // apply edit
             vscode.workspace.applyEdit( workSpaceEdit );
         }
         else
@@ -84,10 +85,7 @@ const checkSignature = ( signature ) => {
 const functionDocString = ( signature ) => {
     let template = ``;
     template += `/**\n* @function `;
-    //get index of function add 8
-    //search for name 
-    // for(i = 0; i < 10; i++)
-    //     template += `${i+1}\n`;
+
     let currentPosition = signature.indexOf( 'function' );
     if( currentPosition === -1 )
         template += `{function name}\n`;
@@ -142,6 +140,33 @@ exports.prettyParameters = prettyParameters;
 exports.checkSignature = checkSignature;
 
 const extractFunctionName = ( signature ) => {
+    //check if contains function -> else check var. let, const
+    //if yes check name in front -> else check var, let, const
+    if( signature.includes( 'function' ) ){
+        const currentPosition = signature.indexOf( 'function' ) + 8;
+        const endSlicePosition = signature.indexOf( '(' );
+        const name = signature.slice( currentPosition, endSlicePosition ).trim();
+        return ( name !== '' ) ? name : extractAlternateFunctionName( signature );
+    }
+    return extractAlternateFunctionName( signature );
+};
+
+const extractAlternateFunctionName = ( signature ) => {
+    if( signature.includes( 'var' ) || signature.includes( 'let' ) || signature.includes( 'const' ) ){
+        if( signature.includes( '=' ) ){
+            const mapIndex = {
+                var : signature.indexOf( 'var' ),
+                const : signature.indexOf( 'const' ),
+                let : signature.indexOf( 'let' )
+            };
+            const keys = Object.keys( mapIndex ).filter( x => mapIndex[x] !== -1 );
+            const startingIndex = mapIndex[ keys[0] ] + keys[0].length;
+
+            return signature.slice( startingIndex, signature.indexOf( '=' ) ).trim();
+        }
+        
+    }
     return '';
 };
+
 exports.extractFunctionName = extractFunctionName;
