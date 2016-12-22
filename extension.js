@@ -101,7 +101,8 @@ const functionDocString = ( signature ) => {
 exports.functionDocString = functionDocString;
 
 const extractParameters = ( signature ) => {
-    return [];
+    const possibleParameters = signature.slice( signature.indexOf( '(' ) + 1, signature.indexOf( ')' ) ).trim();
+    return (possibleParameters === '') ? [] : possibleParameters.split(',').map( str => str.trim() );
 };
 exports.extractParameters = extractParameters;
 
