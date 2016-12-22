@@ -76,7 +76,7 @@ const checkSignature = ( signature ) => {
  * @return {String}       Properly formatted initials.
  */
 /**
- * @author Jane Smith <jsmith@example.com>
+ * @author Mohseen Mukaddam <mohseenmukaddam6@gmail.com>
  */
 const functionDocString = ( signature ) => {
     let template = ``;
@@ -86,11 +86,15 @@ const functionDocString = ( signature ) => {
     // for(i = 0; i < 10; i++)
     //     template += `${i+1}\n`;
     let currentPosition = signature.indexOf( 'function' );
-    const endSlicePosition = signature.indexOf( '(' );
-    currentPosition += 8;
-    const name = signature.slice( currentPosition, endSlicePosition ).trim();
+    if( currentPosition === -1 )
+        template += `{function name}\n`;
+    else{
+        currentPosition += 8;
+        const endSlicePosition = signature.indexOf( '(' );
     
-    template += `${(name === '') ? `{function name}\n` : `${name}\n`}`;
+        const name = signature.slice( currentPosition, endSlicePosition ).trim();
+        template += `${(name === '') ? `{function name}\n` : `${name}\n`}`;
+    }
 
     const parameters = extractParameters( signature );
 
