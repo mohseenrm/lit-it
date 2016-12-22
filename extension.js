@@ -82,6 +82,12 @@ const checkSignature = ( signature ) => {
 /**
  * @author Mohseen Mukaddam <mohseenmukaddam6@gmail.com>
  */
+
+/**
+* @function functionDocString
+* @param  {String} signature Function signature
+* @return {String} Generated DocString for function
+*/
 const functionDocString = ( signature ) => {
     let template = ``;
     template += `/**\n* @function `;
