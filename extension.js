@@ -99,9 +99,9 @@ const functionDocString = ( signature ) => {
         return template;
     }
     else{
-        let parameterString = parameters.map( param => `* @param {type} ${param} {description}\n` );
+        let parameterString = parameters.map( param => `* @param  {type} ${param} {description}\n` );
         parameterString = parameterString.reduce( ( acc, curr ) => acc.concat( curr ) );
-        parameterString += `* @return {type} {description}\n*/`;
+        parameterString += `* @return {type}  {description}\n*/`;
         return( template.concat( parameterString ) );
     }
 };
