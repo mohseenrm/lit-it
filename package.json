@@ -1,12 +1,20 @@
 {
   "name": "lit-it",
   "displayName": "lit-it",
-  "description": "lazy js doc builder",
+  "description": "lazy JSdoc builder, add character to your code",
   "version": "1.0.1",
   "publisher": "mohseenrm",
   "engines": {
     "vscode": "^1.5.0"
   },
+  "license":"SEE LICENSE IN LICENSE.txt",
+  "bugs": {
+		"url": "https://github.com/mohseenrm/lit-it/issues"
+	},
+  "repository": {
+		"type": "git",
+		"url": "https://github.com/mohseenrm/lit-it.git"
+	},
   "categories": [
     "Other"
   ],
