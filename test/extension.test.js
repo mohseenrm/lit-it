@@ -6,7 +6,8 @@ const expect = require('chai').expect;
 
 const checkSignature = lit.checkSignature,
       extractParameters = lit.extractParameters,
-      prettyParameters = lit.prettyParameters;
+      prettyParameters = lit.prettyParameters,
+      extractFunctionName = lit.extractFunctionName;
 
 describe("lit-it-core", () => {
     it("chai test", () => {
@@ -85,5 +86,21 @@ describe("Doc String generation", () => {
         expect( prettyParameters( signature2 ) ).to.deep.equal( ['param1', 'param ', 'xz    ', 'x     '] );
         expect( prettyParameters( signature3 ) ).to.deep.equal( ['xyz'] );
         expect( prettyParameters( signature4 ) ).to.deep.equal( ['first_parameter', 'a              ', 'param2         '] );
+    });
+
+    it("extracting function name", () => {
+        const signature = 'const customFn = () => {}';
+        const signature2 = 'let customFn = () => {}';
+        const signature3 = 'var customFn = function(x) => {';
+        const signature4 = 'function customFn(x, y){';
+        const signature5 = 'function customFn(){';
+        const signature6 = 'let x = function(param){';
+
+        expect( extractFunctionName( signature ) ).to.equal( 'customFn' );
+        expect( extractFunctionName( signature2 ) ).to.equal( 'customFn' );
+        expect( extractFunctionName( signature3 ) ).to.equal( 'customFn' );
+        expect( extractFunctionName( signature4 ) ).to.equal( 'customFn' );
+        expect( extractFunctionName( signature5 ) ).to.equal( 'customFn' );
+        expect( extractFunctionName( signature6 ) ).to.equal( '' );
     });
 });

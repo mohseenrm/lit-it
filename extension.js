@@ -35,8 +35,11 @@ function activate(context) {
 
             const textOfInterest = editor.document.getText( requiredRange );
             console.log( textOfInterest );
+
+            const docString = functionDocString( textOfInterest );
+
             //insert this at current position
-            const insertionText = new TextEdit( new Range( ( position.line ), 0, ( position.line + 1 ), 0 ), "Custom String inserted\n" );
+            const insertionText = new TextEdit( new Range( ( position.line ), 0, ( position.line + 1 ), 0 ), docString );
 
             var workSpaceEdit = new vscode.WorkspaceEdit();
             workSpaceEdit.set( editor.document.uri, [ insertionText ] );
@@ -99,13 +102,14 @@ const functionDocString = ( signature ) => {
     const parameters = extractParameters( signature );
 
     if( parameters === 0 ){
-        template += `* @return {type} \t {description}\n*/`;
+        template += `* @return {type} {description}\n*/\n`;
         return template;
     }
     else{
-        let parameterString = parameters.map( param => `* @param  {type} ${param} {description}\n` );
+        const prettyParams = prettyParameters( parameters );
+        let parameterString = prettyParams.map( param => `* @param  {type} ${param} {description}\n` );
         parameterString = parameterString.reduce( ( acc, curr ) => acc.concat( curr ) );
-        parameterString += `* @return {type}  {description}\n*/`;
+        parameterString += `* @return {type} {description}\n*/\n`;
         return( template.concat( parameterString ) );
     }
 };
@@ -136,3 +140,8 @@ const prettyParameters = ( listOfParameters ) => {
 };
 exports.prettyParameters = prettyParameters;
 exports.checkSignature = checkSignature;
+
+const extractFunctionName = ( signature ) => {
+    return '';
+};
+exports.extractFunctionName = extractFunctionName;
