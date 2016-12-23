@@ -20,7 +20,7 @@ install:
   - npm run postinstall
   - npm ls --depth=0
   - npm -v
-  # - npm run vscode:prepublish
+  - npm run vscode:prepublish
 
 script:
   - npm test --silent
