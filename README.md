@@ -1,6 +1,6 @@
 # Lit it
 
-[![N|Solid](https://cldup.com/dTxpPi9lDf.thumb.png)](https://nodesource.com/products/nsolid)
+![Lit it](https://rawgithub.com/mohseenrm/lit-it/blob/master/images/lit-it.svg)
 
 
 Lit it is a lightweight lazy JSDoc builder, that recognizes the function signature and generates doc strings.
