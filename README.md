@@ -11,7 +11,7 @@ UPDATE: now supports ES6 syntax.
 
 ## How to Use?
 1)  Move caret on the line above function start
-2) **F1** + type **Lit it**
+2) **F1** + type **Lit it** + hit **Enter**
 
 ### Installation
 
