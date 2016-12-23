@@ -7,8 +7,12 @@ const vscode = require ('vscode' );
 const Range = vscode.Range;
 const Position = vscode.Position;
 const TextEdit = vscode.TextEdit;
-// this method is called when your extension is activated
-// your extension is activated the very first time the command is executed
+
+/**
+* @function activate
+* @param  {type} context {description}
+* @return {type} {description}
+*/
 function activate(context) {
 
     // Use the console to output diagnostic information (console.log) and errors (console.error)
@@ -70,24 +74,9 @@ const checkSignature = ( signature ) => {
     return 'ES6';
 }
 /**
- * Reduces a sequence of names to initials.
- * @function makeInits
- * @memberOf Helper.
- * @param  {String} name  Space Delimited sequence of names.
- * @param  {String} sep   A period separating the initials.
- * @param  {String} trail A period ending the initials.
- * @param  {String} hyph  A hypen separating double names.
- * @return {String}       Properly formatted initials.
- */
-/**
  * @author Mohseen Mukaddam <mohseenmukaddam6@gmail.com>
  */
 
-/**
-* @function functionDocString
-* @param  {String} signature Function signature
-* @return {String} Generated DocString for function
-*/
 const functionDocString = ( signature ) => {
     let template = ``;
     template += `/**\n* @function `;
@@ -111,6 +100,11 @@ const functionDocString = ( signature ) => {
 };
 exports.functionDocString = functionDocString;
 
+/**
+* @function extractParameters
+* @param  {String} signature The function signature
+* @return {List} List of parameters
+*/
 const extractParameters = ( signature ) => {
     const possibleParameters = signature.slice( signature.indexOf( '(' ) + 1, signature.indexOf( ')' ) ).trim();
     return (possibleParameters === '') ? [] : possibleParameters.split( ',' ).map( str => str.trim() );
