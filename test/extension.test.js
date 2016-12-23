@@ -9,32 +9,32 @@ const checkSignature = lit.checkSignature,
       prettyParameters = lit.prettyParameters,
       extractFunctionName = lit.extractFunctionName;
 
-describe("lit-it-core", () => {
-    it("chai test", () => {
-        const test = [1, 2, 3].indexOf(0);
-        expect(test)
-            .to
-            .equal(-1);
-    });
+// describe("lit-it-core", () => {
+//     it("chai test", () => {
+//         const test = [1, 2, 3].indexOf(0);
+//         expect(test)
+//             .to
+//             .equal(-1);
+//     });
 
-    it("vscode activation test", () => {
-        const editor = vscode.window.activeTextEditor;
-        if( !editor )
-            console.log( "No active Window" );
-        const currentText = vscode.window.activeTextEditor.document;
+//     it("vscode activation test", () => {
+//         const editor = vscode.window.activeTextEditor;
+//         if( !editor )
+//             console.log( "No active Window" );
+//         const currentText = vscode.window.activeTextEditor.document;
 
-        expect(currentText).to.exist;
-    });
-    it("vscode activation test 2", () => {
-        const editor = vscode.window.activeTextEditor;
-        if( !editor )
-            console.log( "No active Window" );
-        const currentText = vscode.window.activeTextEditor.document;
+//         expect(currentText).to.exist;
+//     });
+//     it("vscode activation test 2", () => {
+//         const editor = vscode.window.activeTextEditor;
+//         if( !editor )
+//             console.log( "No active Window" );
+//         const currentText = vscode.window.activeTextEditor.document;
         
-        expect(editor.document.lineCount).to.equal(1);
-        expect(editor.document.isUntitled).to.be.equal(true);
-    });
-});
+//         expect(editor.document.lineCount).to.equal(1);
+//         expect(editor.document.isUntitled).to.be.equal(true);
+//     });
+// });
 
 describe("Doc String generation", () => {
     
