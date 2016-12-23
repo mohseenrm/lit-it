@@ -2,7 +2,7 @@
     "name": "lit-it",
     "displayName": "lit-it",
     "description": "lazy JSdoc builder, add character to your code",
-    "version": "1.2.0",
+    "version": "1.2.5",
     "publisher": "mohseenrm",
     "engines": {
         "vscode": "^1.5.0"
@@ -19,7 +19,11 @@
         "Formatters",
         "Other"
     ],
-    "icon": "./images/lit-it.svg",
+    "icon": "images/lit-it.svg",
+        "galleryBanner": {
+        "color": "#191919",
+        "theme": "dark"
+    },
     "activationEvents": [
         "onCommand:extension.litIt"
     ],
