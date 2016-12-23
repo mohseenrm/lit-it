@@ -5,6 +5,8 @@
 
 Lit it is a lightweight lazy JSDoc builder, that recognizes the function signature and generates doc strings.
 
+![Demo](https://github.com/mohseenrm/lit-it/blob/master/images/demo.gif)
+
 UPDATE: now supports ES6 syntax.
 
 ## How to Use?
