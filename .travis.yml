@@ -13,7 +13,7 @@ before_install:
 
 install:
   # - npm install mocha --registry http://registry.npmjs.org/
-  - npm install --registry http://registry.npmjs.org/
+  - npm install
   - npm run vscode:prepublish
 
 script:
