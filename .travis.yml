@@ -1,3 +1,7 @@
+language: node_js
+node_js:
+  - "6"
+
 sudo: false
 
 os:
@@ -13,6 +17,7 @@ before_install:
 
 install:
   - npm install
+  - npm run postinstall
   - npm ls --depth=0
   - npm -v
   # - npm run vscode:prepublish
