@@ -2,6 +2,7 @@
 
 [![N|Solid](https://cldup.com/dTxpPi9lDf.thumb.png)](https://nodesource.com/products/nsolid)
 
+
 Lit it is a lightweight lazy JSDoc builder, that recognizes the function signature and generates doc strings.
 
 UPDATE: now supports ES6 syntax.
