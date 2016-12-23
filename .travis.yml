@@ -12,8 +12,8 @@ before_install:
     fi
 
 install:
-  - npm install mocha --registry http://registry.npmjs.org/
-  - npm install
+  # - npm install mocha --registry http://registry.npmjs.org/
+  - npm install --registry http://registry.npmjs.org/
   - npm run vscode:prepublish
 
 script:
