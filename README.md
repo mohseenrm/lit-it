@@ -1,6 +1,6 @@
 # Lit it
 
-![Lit it](https://github.com/mohseenrm/lit-it/blob/master/images/lit-it.png)
+<!--![Lit it](https://github.com/mohseenrm/lit-it/blob/master/images/lit-it.png)-->
 
 
 Lit it is a lightweight lazy JSDoc builder, that recognizes the function signature and generates doc strings.
