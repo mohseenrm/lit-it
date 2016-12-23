@@ -10,7 +10,7 @@ Lit it is a lightweight lazy JSDoc builder, that recognizes the function signatu
 UPDATE: now supports ES6 syntax.
 
 ## How to Use?
-1)  Move caret on the line above function start
+1)  Move caret on the line above function
 2) **F1** + type **Lit it** + hit **Enter**
 
 ### Installation
