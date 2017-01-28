@@ -8,6 +8,9 @@ const Range = vscode.Range;
 const Position = vscode.Position;
 const TextEdit = vscode.TextEdit;
 
+//https://code.visualstudio.com/Docs/extensionAPI/vscode-api#_workspace
+// subscribe to onDidChangeTextDocument and add move selection
+
 /**
 * @function activate
 * @param  {type} context {description}
