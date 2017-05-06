@@ -59,7 +59,10 @@ function activate(context) {
         else
             vscode.window.showInformationMessage( 'Lit-it does not work with selection' );
         // vscode.window.showInformationMessage(currentText.getText());
-
+        let count = 0;
+        let dispose = vscode.workspace.onDidChangeTextDocument(tabEventListner);
+        //probably use promises to dispose the event listener
+        
     });
 
     context.subscriptions.push(disposable);
@@ -165,3 +168,8 @@ const extractAlternateFunctionName = ( signature ) => {
 };
 
 exports.extractFunctionName = extractFunctionName;
+
+const tabEventListner = (event) => {
+    vscode.window.showInformationMessage('Doing Something!');
+    count++;
+};
