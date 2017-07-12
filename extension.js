@@ -85,7 +85,7 @@ const checkSignature = ( signature ) => {
 
 const functionDocString = ( signature ) => {
     let template = ``;
-    template += `/**\n* @function `;
+    template += `/**\n * @function `;
 
     const name = extractFunctionName( signature );
     template += `${(name === '') ? `{function name}\n` : `${name}\n`}`;
@@ -93,14 +93,14 @@ const functionDocString = ( signature ) => {
     const parameters = extractParameters( signature );
 
     if( parameters.length === 0 ){
-        template += `* @return {type} {description}\n*/\n`;
+        template += ` * @return {type} {description}\n*/\n`;
         return template;
     }
     else{
         const prettyParams = prettyParameters( parameters );
-        let parameterString = prettyParams.map( param => `* @param  {type} ${param} {description}\n` );
+        let parameterString = prettyParams.map( param => ` * @param  {type} ${param} {description}\n` );
         parameterString = parameterString.reduce( ( acc, curr ) => acc.concat( curr ) );
-        parameterString += `* @return {type} {description}\n*/\n`;
+        parameterString += ` * @return {type} {description}\n*/\n`;
         return( template.concat( parameterString ) );
     }
 };
