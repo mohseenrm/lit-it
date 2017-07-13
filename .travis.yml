@@ -12,10 +12,10 @@ before_install:
     fi
 
 install:
-  - npm install
-  - npm run postinstall
-  - npm ls --depth=0
-  - npm run vscode:prepublish
+  - yarn install
+  - yarn postinstall
+  - yarn ls --depth=0
+  - yarn vscode:prepublish
 
 script:
-  - npm test --silent
+  - yarn test --silent
