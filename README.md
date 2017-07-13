@@ -21,6 +21,16 @@ UPDATE: now supports ES6 syntax.
 ext install lit-it
 ```
 
+## Development
+
+### Build
+```
+npm i
+```
+
+### Test
+Use the .vscode config to run the tests locally. Naviagate to debug panel and launch tests or launch extension. 
+
 ## Release Notes
 
 
