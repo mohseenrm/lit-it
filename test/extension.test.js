@@ -4,11 +4,12 @@ const vscode = require('vscode');
 const lit = require('../extension');
 const expect = require('chai').expect;
 
-const checkSignature = lit.checkSignature,
-      extractParameters = lit.extractParameters,
-      prettyParameters = lit.prettyParameters,
-      functionDocString = lit.functionDocString,
-      extractFunctionName = lit.extractFunctionName;
+const {
+    checkSignature,
+    extractParameters,
+    prettyParameters,
+    functionDocString,
+    extractFunctionName} = lit;
 
 describe("Doc String generation", () => {
     
@@ -79,12 +80,31 @@ describe("Doc String generation", () => {
     });
 
     it("correctly indents nested blocks", () => {
-        const signature = '    fn(){';
-        const expected = 
+        const oneSpaceSignature = ' fn(){';
+        const oneSpaceExpected = 
+        ' /**\n' +
+        '  * @function {function name}\n' +
+        '  * @return {type} {description}\n'+
+        '  */\n';
+
+        const threeSpaceIndentSignature = '   fn(){';
+        const threeSpaceIndentExpected = 
+        '   /**\n' +
+        '    * @function {function name}\n' +
+        '    * @return {type} {description}\n'+
+        '    */\n';
+
+        const fourSpaceIndentSignature = '    fn(){';
+        const fourSpaceIndentExpected = 
         '    /**\n' +
         '     * @function {function name}\n' +
         '     * @return {type} {description}\n'+
         '     */\n';
-        expect (functionDocString(signature)).to.equal(expected);
+
+
+
+        expect (functionDocString(oneSpaceSignature)).to.equal(oneSpaceExpected);
+        expect (functionDocString(threeSpaceIndentSignature)).to.equal(threeSpaceIndentExpected);
+        expect (functionDocString(fourSpaceIndentSignature)).to.equal(fourSpaceIndentExpected);
     });
 });
