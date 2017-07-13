@@ -9,7 +9,8 @@ const {
     extractParameters,
     prettyParameters,
     functionDocString,
-    extractFunctionName} = lit;
+    extractFunctionName
+} = lit;
 
 describe("Doc String generation", () => {
     
