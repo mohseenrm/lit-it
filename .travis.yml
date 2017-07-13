@@ -15,7 +15,6 @@ install:
   - npm install
   - npm run postinstall
   - npm ls --depth=0
-  - npm -v
   - npm run vscode:prepublish
 
 script:
