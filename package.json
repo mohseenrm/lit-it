@@ -43,15 +43,17 @@
         ]
     },
     "scripts": {
-        "vscode:prepublish": "node ./node_modules/vscode/bin/compile",
         "postinstall": "node ./node_modules/vscode/bin/install",
-        "test": "node ./node_modules/vscode/bin/test"
+        "test": "node ./node_modules/vscode/bin/test",
+        "vscode:prepublish": "node ./node_modules/vscode/bin/compile"
     },
     "devDependencies": {
         "chai": "^3.5.0",
         "eslint": "^3.6.0",
         "mocha": "^2.3.3",
         "typescript": "^2.0.3",
-        "vscode": "^1.0.0"
+        "vscode": "^1.0.0",
+        "@types/mocha": "^2.2.32",
+        "@types/node": "^6.0.40"
     }
 }   
