@@ -7,6 +7,7 @@ const expect = require('chai').expect;
 const checkSignature = lit.checkSignature,
       extractParameters = lit.extractParameters,
       prettyParameters = lit.prettyParameters,
+      functionDocString = lit.functionDocString,
       extractFunctionName = lit.extractFunctionName;
 
 describe("Doc String generation", () => {
@@ -75,5 +76,15 @@ describe("Doc String generation", () => {
         expect( extractFunctionName( signature4 ) ).to.equal( 'customFn' );
         expect( extractFunctionName( signature5 ) ).to.equal( 'customFn' );
         expect( extractFunctionName( signature6 ) ).to.equal( 'x' );
+    });
+
+    it("correctly indents nested blocks", () => {
+        const signature = '    fn(){';
+        const expected = 
+        '    /**\n' +
+        '     * @function {function name}\n' +
+        '     * @return {type} {description}\n'+
+        '     */\n';
+        expect (functionDocString(signature)).to.equal(expected);
     });
 });
