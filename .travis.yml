@@ -1,5 +1,10 @@
 sudo: false
 
+language: node_js
+
+node_js:
+  - "6"
+
 os:
   - osx
   - linux
@@ -15,8 +20,7 @@ before_install:
 install:
   - yarn install
   - yarn postinstall
-  - yarn ls --depth=0
-  - yarn vscode:prepublish
+  - node ./node_modules/vscode/bin/compile
 
 script:
   - yarn test --silent
