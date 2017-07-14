@@ -176,6 +176,5 @@ const extractAlternateFunctionName = ( signature ) => {
 exports.extractFunctionName = extractFunctionName;
 
 const tabEventListner = (event) => {
-    vscode.window.showInformationMessage('Doing Something!');
     count++;
 };
