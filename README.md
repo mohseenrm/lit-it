@@ -42,11 +42,12 @@ ext install lit-it
 
 ### Build
 ```
-npm i
+yarn
+yarn compile
 ```
 
 ### Test
-Use the .vscode config to run the tests locally. Naviagate to debug panel and launch tests or launch extension. 
+yarn test
 
 ## Release Notes
 
