@@ -1,10 +1,10 @@
 {
   "name": "node-debug2",
-  "displayName": "Node Debug 2 - Experimental",
-  "version": "1.8.6",
+  "displayName": "Node Debug 2",
+  "version": "1.14.5",
   "publisher": "ms-vscode",
   "description": "%extension.description%",
-  "icon": "images/node-debug-icon.svg",
+  "icon": "images/node-debug-icon.png",
   "categories": [
     "Debuggers"
   ],
@@ -14,44 +14,45 @@
   "license": "MIT",
   "private": true,
   "dependencies": {
-    "vscode-chrome-debug-core": "3.8.1",
-    "vscode-debugadapter": "^1.14.0",
-    "vscode-debugprotocol": "^1.14.0",
-    "vscode-nls": "^1.0.4"
+    "vscode-chrome-debug-core": "^3.15.10",
+    "vscode-debugadapter": "^1.21.0-pre.2",
+    "vscode-nls": "^2.0.2"
   },
   "devDependencies": {
     "@types/mocha": "^2.2.32",
-    "@types/node": "^6.0.39",
+    "@types/node": "^6.0.52",
     "@types/source-map": "^0.1.27",
-    "chrome-remote-debug-protocol": "^1.1.20160822",
     "del": "^2.2.2",
+    "event-stream": "^3.3.4",
     "gulp": "^3.9.1",
     "gulp-sourcemaps": "^2.2.0",
     "gulp-tslint": "^6.1.2",
-    "gulp-typescript": "^2.12.1",
+    "gulp-typescript": "^3.1.3",
     "gulp-util": "^3.0.5",
     "mocha": "^3.1.1",
     "run-sequence": "^1.2.2",
     "tslint": "^3.15.1",
-    "typescript": "~2.0.2",
+    "typescript": "^2.1.4",
     "vsce": "^1.14.0",
     "vscode": "^1.0.0",
-    "vscode-debugadapter-testsupport": "^1.15.0-pre.0",
-    "vscode-nls-dev": "^2.0.0-beta.1"
+    "vscode-chrome-debug-core-testsupport": "^3.14.3",
+    "vscode-debugadapter-testsupport": "1.19.0",
+    "vscode-debugprotocol": "^1.21.0-pre.1",
+    "vscode-nls-dev": "^2.1.3"
   },
   "main": "./out/src/extension",
   "activationEvents": [
-    "onCommand:extension.pickNodeProcess",
-    "onCommand:extension.node-debug2.provideInitialConfigurations"
+    "onCommand:extension.node-debug2.toggleSkippingFile"
   ],
   "scripts": {
     "postinstall": "node ./node_modules/vscode/bin/install",
     "build": "gulp build",
-    "test": "mocha --timeout 20000 -s 2000 -u tdd --colors --reporter out/test/loggingReporter.js ./out/test/",
+    "watch": "gulp watch",
+    "test": "mocha --timeout 20000 -s 2000 -u tdd --colors --reporter node_modules/vscode-chrome-debug-core-testsupport/out/loggingReporter.js ./out/test/",
     "vscode:prepublish": "gulp verify-no-linked-modules"
   },
   "engines": {
-    "vscode": "^1.8.0",
+    "vscode": "^1.14.0",
     "node": "^6.3.0"
   },
   "repository": {
@@ -69,31 +70,10 @@
     }],
     "debuggers": [{
       "type": "node2",
-      "label": "Node.js v6.3+ (Experimental)",
+      "label": "Node.js v6.3+",
       "program": "./out/src/nodeDebug.js",
       "runtime": "node",
       "aiKey": "AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217",
-      "initialConfigurations": "extension.node-debug2.provideInitialConfigurations",
-      "configurationSnippets": [{
-        "label": "%node.snippet.launch.label%",
-        "description": "%node.snippet.launch.description%",
-        "body": {
-          "type": "node2",
-          "request": "launch",
-          "name": "${2:Launch Program}",
-          "program": "^\"\\${workspaceRoot}/${1:app.js}\"",
-          "cwd": "^\"\\${workspaceRoot}\""
-        }
-      }, {
-        "label": "%node.snippet.attach.label%",
-        "description": "%node.snippet.attach.description%",
-        "body": {
-          "type": "node",
-          "request": "attach",
-          "name": "${2:Attach to Port}",
-          "port": 9229
-        }
-      }],
       "configurationAttributes": {
         "launch": {
           "required": [
@@ -125,6 +105,11 @@
                 "type": "string"
               },
               "default": []
+            },
+            "restart": {
+              "type": "boolean",
+              "description": "%node.restart.description%",
+              "default": true
             },
             "cwd": {
               "type": "string",
@@ -200,12 +185,26 @@
             "diagnosticLogging": {
               "type": "boolean",
               "description": "%node.diagnosticLogging.description%",
-              "default": true
+              "default": true,
+              "deprecationMessage": "%node.diagnosticLogging.deprecationMessage%"
             },
             "verboseDiagnosticLogging": {
               "type": "boolean",
               "description": "%node.verboseDiagnosticLogging.description%",
-              "default": true
+              "default": true,
+              "deprecationMessage": "%node.verboseDiagnosticLogging.deprecationMessage%"
+            },
+            "trace": {
+              "type": [
+                "boolean",
+                "string"
+              ],
+              "enum": [
+                "verbose",
+                true
+              ],
+              "default": true,
+              "description": "%node.trace.description%"
             },
             "sourceMapPathOverrides": {
               "type": "object",
@@ -216,6 +215,16 @@
               "type": "array",
               "description": "%node.skipFiles.description%",
               "default": []
+            },
+            "envFile": {
+              "type": "string",
+              "description": "%node.launch.envFile.description%",
+              "default": "${workspaceRoot}/.env"
+            },
+            "showAsyncStacks": {
+              "type": "boolean",
+              "description": "%node.showAsyncStacks.description%",
+              "default": true
             }
           }
         },
@@ -238,7 +247,7 @@
             },
             "restart": {
               "type": "boolean",
-              "description": "%node.attach.restart.description%",
+              "description": "%node.restart.description%",
               "default": true
             },
             "sourceMaps": {
@@ -292,12 +301,26 @@
             "diagnosticLogging": {
               "type": "boolean",
               "description": "%node.diagnosticLogging.description%",
-              "default": true
+              "default": true,
+              "deprecationMessage": "%node.diagnosticLogging.deprecationMessage%"
             },
             "verboseDiagnosticLogging": {
               "type": "boolean",
               "description": "%node.verboseDiagnosticLogging.description%",
-              "default": true
+              "default": true,
+              "deprecationMessage": "%node.verboseDiagnosticLogging.deprecationMessage%"
+            },
+            "trace": {
+              "type": [
+                "boolean",
+                "string"
+              ],
+              "enum": [
+                "verbose",
+                true
+              ],
+              "default": true,
+              "description": "%node.trace.description%"
             },
             "sourceMapPathOverrides": {
               "type": "object",
@@ -308,10 +331,32 @@
               "type": "array",
               "description": "%node.skipFiles.description%",
               "default": []
+            },
+            "showAsyncStacks": {
+              "type": "boolean",
+              "description": "%node.showAsyncStacks.description%",
+              "default": true
             }
           }
         }
       }
+    }],
+    "menus": {
+      "debug/callstack/context": [{
+        "command": "extension.node-debug2.toggleSkippingFile",
+        "group": "navigation",
+        "when": "inDebugMode && debugType == 'node2'"
+      }]
+    },
+    "commands": [{
+      "command": "extension.node-debug2.toggleSkippingFile",
+      "title": "Toggle Skipping This File"
+    }],
+    "keybindings": [{
+      "command": "extension.node-debug.pickLoadedScript",
+      "key": "ctrl+f4",
+      "mac": "cmd+f4",
+      "when": "debugType == 'node2'"
     }]
   },
   "__metadata": {

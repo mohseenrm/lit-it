@@ -3,9 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 'use strict';
-var vscode_1 = require('vscode');
-var markedTextUtil_1 = require('./markedTextUtil');
-var nls = require('vscode-nls');
+Object.defineProperty(exports, "__esModule", { value: true });
+var vscode_1 = require("vscode");
+var markedTextUtil_1 = require("./markedTextUtil");
+var nls = require("vscode-nls");
 var localize = nls.loadMessageBundle(__filename);
 var BowerJSONContribution = (function () {
     function BowerJSONContribution(xhr) {
@@ -69,6 +70,7 @@ var BowerJSONContribution = (function () {
                             }
                         }
                         catch (e) {
+                            // ignore
                         }
                     }
                     else {
@@ -146,6 +148,7 @@ var BowerJSONContribution = (function () {
                 }
             }
             catch (e) {
+                // ignore
             }
             return void 0;
         }, function (error) {
@@ -169,4 +172,4 @@ var BowerJSONContribution = (function () {
     return BowerJSONContribution;
 }());
 exports.BowerJSONContribution = BowerJSONContribution;
-//# sourceMappingURL=https://ticino.blob.core.windows.net/sourcemaps/ee428b0eead68bf0fb99ab5fdc4439be227b6281/extensions/javascript/out/features/bowerJSONContribution.js.map
+//# sourceMappingURL=https://ticino.blob.core.windows.net/sourcemaps/2648980a697a4c8fb5777dcfb2ab110cec8a2f58/extensions/javascript/out/features/bowerJSONContribution.js.map

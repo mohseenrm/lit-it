@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 'use strict';
+Object.defineProperty(exports, "__esModule", { value: true });
 function getLanguageModelCache(maxEntries, cleanupIntervalTimeInSec, parse) {
     var languageModels = {};
     var nModels = 0;
@@ -70,4 +71,4 @@ function getLanguageModelCache(maxEntries, cleanupIntervalTimeInSec, parse) {
     };
 }
 exports.getLanguageModelCache = getLanguageModelCache;
-//# sourceMappingURL=https://ticino.blob.core.windows.net/sourcemaps/ee428b0eead68bf0fb99ab5fdc4439be227b6281/extensions/json/server/out/languageModelCache.js.map
+//# sourceMappingURL=https://ticino.blob.core.windows.net/sourcemaps/2648980a697a4c8fb5777dcfb2ab110cec8a2f58/extensions/json/server/out/languageModelCache.js.map

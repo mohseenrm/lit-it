@@ -1,11 +1,20 @@
+"use strict";
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-'use strict';
-var vscode_1 = require('vscode');
-var PConst = require('../protocol.const');
-var outlineTypeTable = Object.create(null);
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : new P(function (resolve) { resolve(result.value); }).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const vscode_1 = require("vscode");
+const PConst = require("../protocol.const");
+const outlineTypeTable = Object.create(null);
 outlineTypeTable[PConst.Kind.module] = vscode_1.SymbolKind.Module;
 outlineTypeTable[PConst.Kind.class] = vscode_1.SymbolKind.Class;
 outlineTypeTable[PConst.Kind.enum] = vscode_1.SymbolKind.Enum;
@@ -23,79 +32,73 @@ outlineTypeTable[PConst.Kind.localFunction] = vscode_1.SymbolKind.Function;
 function textSpan2Range(value) {
     return new vscode_1.Range(value.start.line - 1, value.start.offset - 1, value.end.line - 1, value.end.offset - 1);
 }
-var TypeScriptDocumentSymbolProvider = (function () {
-    function TypeScriptDocumentSymbolProvider(client) {
+class TypeScriptDocumentSymbolProvider {
+    constructor(client) {
         this.client = client;
     }
-    TypeScriptDocumentSymbolProvider.prototype.provideDocumentSymbols = function (resource, token) {
-        var _this = this;
-        var filepath = this.client.asAbsolutePath(resource.uri);
-        if (!filepath) {
-            return Promise.resolve([]);
-        }
-        var args = {
-            file: filepath
-        };
-        if (!args.file) {
-            return Promise.resolve([]);
-        }
-        function convertNavBar(indent, foldingMap, bucket, item, containerLabel) {
-            var realIndent = indent + item.indent;
-            var key = realIndent + "|" + item.text;
-            if (realIndent !== 0 && !foldingMap[key]) {
-                var result = new vscode_1.SymbolInformation(item.text, outlineTypeTable[item.kind] || vscode_1.SymbolKind.Variable, containerLabel ? containerLabel : '', new vscode_1.Location(resource.uri, textSpan2Range(item.spans[0])));
-                foldingMap[key] = result;
-                bucket.push(result);
+    provideDocumentSymbols(resource, token) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const filepath = this.client.normalizePath(resource.uri);
+            if (!filepath) {
+                return [];
             }
-            if (item.childItems && item.childItems.length > 0) {
-                for (var _i = 0, _a = item.childItems; _i < _a.length; _i++) {
-                    var child = _a[_i];
-                    convertNavBar(realIndent + 1, foldingMap, bucket, child, item.text);
+            const args = {
+                file: filepath
+            };
+            try {
+                const result = [];
+                if (this.client.apiVersion.has206Features()) {
+                    const response = yield this.client.execute('navtree', args, token);
+                    if (response.body) {
+                        // The root represents the file. Ignore this when showing in the UI
+                        let tree = response.body;
+                        if (tree.childItems) {
+                            tree.childItems.forEach(item => TypeScriptDocumentSymbolProvider.convertNavTree(resource.uri, result, item));
+                        }
+                    }
                 }
-            }
-        }
-        function convertNavTree(bucket, item, containerLabel) {
-            var result = new vscode_1.SymbolInformation(item.text, outlineTypeTable[item.kind] || vscode_1.SymbolKind.Variable, containerLabel ? containerLabel : '', new vscode_1.Location(resource.uri, textSpan2Range(item.spans[0])));
-            if (item.childItems && item.childItems.length > 0) {
-                for (var _i = 0, _a = item.childItems; _i < _a.length; _i++) {
-                    var child = _a[_i];
-                    convertNavTree(bucket, child, result.name);
-                }
-            }
-            bucket.push(result);
-        }
-        if (this.client.apiVersion.has206Features()) {
-            return this.client.execute('navtree', args, token).then(function (response) {
-                var result = [];
-                if (response.body) {
-                    // The root represents the file. Ignore this when showing in the UI
-                    var tree = response.body;
-                    if (tree.childItems) {
-                        tree.childItems.forEach(function (item) { return convertNavTree(result, item); });
+                else {
+                    const response = yield this.client.execute('navbar', args, token);
+                    if (response.body) {
+                        let foldingMap = Object.create(null);
+                        response.body.forEach(item => TypeScriptDocumentSymbolProvider.convertNavBar(resource.uri, 0, foldingMap, result, item));
                     }
                 }
                 return result;
-            }, function (err) {
-                _this.client.error("'navtree' request failed with error.", err);
+            }
+            catch (e) {
                 return [];
-            });
+            }
+        });
+    }
+    static convertNavBar(resource, indent, foldingMap, bucket, item, containerLabel) {
+        let realIndent = indent + item.indent;
+        let key = `${realIndent}|${item.text}`;
+        if (realIndent !== 0 && !foldingMap[key] && TypeScriptDocumentSymbolProvider.shouldInclueEntry(item.text)) {
+            let result = new vscode_1.SymbolInformation(item.text, outlineTypeTable[item.kind] || vscode_1.SymbolKind.Variable, containerLabel ? containerLabel : '', new vscode_1.Location(resource, textSpan2Range(item.spans[0])));
+            foldingMap[key] = result;
+            bucket.push(result);
         }
-        else {
-            return this.client.execute('navbar', args, token).then(function (response) {
-                var result = [];
-                if (response.body) {
-                    var foldingMap_1 = Object.create(null);
-                    response.body.forEach(function (item) { return convertNavBar(0, foldingMap_1, result, item); });
-                }
-                return result;
-            }, function (err) {
-                _this.client.error("'navbar' request failed with error.", err);
-                return [];
-            });
+        if (item.childItems && item.childItems.length > 0) {
+            for (let child of item.childItems) {
+                TypeScriptDocumentSymbolProvider.convertNavBar(resource, realIndent + 1, foldingMap, bucket, child, item.text);
+            }
         }
-    };
-    return TypeScriptDocumentSymbolProvider;
-}());
-Object.defineProperty(exports, "__esModule", { value: true });
+    }
+    static convertNavTree(resource, bucket, item, containerLabel) {
+        const result = new vscode_1.SymbolInformation(item.text, outlineTypeTable[item.kind] || vscode_1.SymbolKind.Variable, containerLabel ? containerLabel : '', new vscode_1.Location(resource, textSpan2Range(item.spans[0])));
+        if (item.childItems && item.childItems.length > 0) {
+            for (const child of item.childItems) {
+                TypeScriptDocumentSymbolProvider.convertNavTree(resource, bucket, child, result.name);
+            }
+        }
+        if (TypeScriptDocumentSymbolProvider.shouldInclueEntry(result.name)) {
+            bucket.push(result);
+        }
+    }
+    static shouldInclueEntry(name) {
+        return !!(name && name !== '<function>' && name !== '<class>');
+    }
+}
 exports.default = TypeScriptDocumentSymbolProvider;
-//# sourceMappingURL=https://ticino.blob.core.windows.net/sourcemaps/ee428b0eead68bf0fb99ab5fdc4439be227b6281/extensions/typescript/out/features/documentSymbolProvider.js.map
+//# sourceMappingURL=https://ticino.blob.core.windows.net/sourcemaps/2648980a697a4c8fb5777dcfb2ab110cec8a2f58/extensions/typescript/out/features/documentSymbolProvider.js.map

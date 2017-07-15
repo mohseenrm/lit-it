@@ -1,10 +1,11 @@
+"use strict";
 /*---------------------------------------------------------
  * Copyright (C) Microsoft Corporation. All rights reserved.
  *--------------------------------------------------------*/
-"use strict";
-const path = require('path');
-const fs = require('fs');
-const cp = require('child_process');
+Object.defineProperty(exports, "__esModule", { value: true });
+const path = require("path");
+const fs = require("fs");
+const cp = require("child_process");
 const NODE_SHEBANG_MATCHER = new RegExp('#! */usr/bin/env +node');
 function isJavaScript(aPath) {
     const name = path.basename(aPath).toLowerCase();
@@ -22,6 +23,7 @@ function isJavaScript(aPath) {
         }
     }
     catch (e) {
+        // silently ignore problems
     }
     return false;
 }
@@ -30,16 +32,6 @@ function random(low, high) {
     return Math.floor(Math.random() * (high - low) + low);
 }
 exports.random = random;
-/**
- * Placeholder localize function
- */
-function localize(id, msg, ...args) {
-    args.forEach((arg, i) => {
-        msg = msg.replace(new RegExp(`\\{${i}\\}`, 'g'), arg);
-    });
-    return msg;
-}
-exports.localize = localize;
 function killTree(processId) {
     if (process.platform === 'win32') {
         const TASK_KILL = 'C:\\Windows\\System32\\taskkill.exe';
@@ -70,10 +62,12 @@ function isOnPath(program) {
                 cp.execSync(`${WHERE} ${program}`);
             }
             else {
+                // do not report error if 'where' doesn't exist
             }
             return true;
         }
         catch (Exception) {
+            // ignore
         }
     }
     else {
@@ -83,6 +77,7 @@ function isOnPath(program) {
                 cp.execSync(`${WHICH} '${program}'`);
             }
             else {
+                // do not report error if 'which' doesn't exist
             }
             return true;
         }
@@ -96,5 +91,21 @@ function trimLastNewline(msg) {
     return msg.replace(/(\n|\r\n)$/, '');
 }
 exports.trimLastNewline = trimLastNewline;
+function extendObject(toObject, fromObject) {
+    for (let key in fromObject) {
+        if (fromObject.hasOwnProperty(key)) {
+            toObject[key] = fromObject[key];
+        }
+    }
+    return toObject;
+}
+exports.extendObject = extendObject;
+function stripBOM(s) {
+    if (s && s[0] === '\uFEFF') {
+        s = s.substr(1);
+    }
+    return s;
+}
+exports.stripBOM = stripBOM;
 
 //# sourceMappingURL=utils.js.map

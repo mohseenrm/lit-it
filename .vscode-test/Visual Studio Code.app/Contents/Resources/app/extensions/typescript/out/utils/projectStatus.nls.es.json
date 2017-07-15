@@ -1,7 +1,7 @@
 [
-	"Para habilitar JavaScript/TypeScript IntelliSense, excluya las carpetas con muchos archivos, como: {0}",
-	"Para habilitar JavaScript/TypeScript IntelliSense, excluya las carpetas de gran tamaño con archivos de origen en los que no trabaja.",
+	"Para habilitar las características de lenguaje de JavaScript/TypeScript en todo el proyecto, excluya las carpetas con muchos archivos, como: {0}",
+	"Para habilitar las características de idioma de JavaScript/TypeScript IntelliSense en todo el proyecto, excluya las carpetas de tamaño grande con archivos de origen en los que no trabaje.",
 	"Configurar exclusiones",
-	"Configurar exclusiones",
-	"Para habilitar JavaScript/TypeScript IntelliSense, excluya las carpetas de gran tamaño con archivos de origen en los que no trabaja."
+	"Para habilitar las características de idioma de JavaScript/TypeScript IntelliSense en todo el proyecto, excluya las carpetas de tamaño grande con archivos de origen en los que no trabaje.",
+	"Configurar exclusiones"
 ]

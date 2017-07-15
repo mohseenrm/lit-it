@@ -1,59 +1,62 @@
 {
-  "name": "lit-it",
-  "displayName": "lit-it",
-  "description": "lazy JSdoc builder, add character to your code",
-  "version": "1.2.10",
-  "publisher": "mohseenrm",
-  "engines": {
-    "vscode": "^1.6.0"
-  },
-"license": "MIT",
-  "bugs": {
-    "url": "https://github.com/mohseenrm/lit-it/issues"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/mohseenrm/lit-it.git"
-  },
-  "keywords": [
-    "JS",
-    "Formatters",
-    "DOCStrings"
-  ],
-  "categories": [
-    "Formatters",
-    "Other"
-  ],
-  "icon": "images/lit-it.svg",
-  "galleryBanner": {
-    "color": "#191919",
-    "theme": "dark"
-  },
-  "activationEvents": [
-    "onCommand:extension.litIt"
-  ],
-  "main": "./extension",
-  "contributes": {
-    "commands": [
-      {
-        "command": "extension.litIt",
-        "title": "Lit it!",
-        "description": "Add JSdocs for your JS code"
-      }
-    ]
-  },
-  "scripts": {
-    "postinstall": "node ./node_modules/vscode/bin/install",
-    "test": "node ./node_modules/vscode/bin/test",
-    "vscode:prepublish": "node ./node_modules/vscode/bin/compile"
-  },
-  "devDependencies": {
-    "@types/mocha": "^2.2.41",
-    "@types/node": "^6.0.82",
-    "chai": "^3.5.0",
-    "eslint": "^3.6.0",
-    "mocha": "^2.3.3",
-    "typescript": "^2.0.3",
-    "vscode": "^1.1.0"
-  }
+    "name": "lit-it",
+    "displayName": "lit-it",
+    "description": "lazy JSdoc builder, add character to your code",
+    "version": "1.2.10",
+    "publisher": "mohseenrm",
+    "engines": {
+        "vscode": "^1.0.0"
+    },
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/mohseenrm/lit-it/issues"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/mohseenrm/lit-it.git"
+    },
+    "keywords": [
+        "JS",
+        "Formatters",
+        "DOCStrings"
+    ],
+    "categories": [
+        "Formatters",
+        "Other"
+    ],
+    "icon": "images/lit-it.svg",
+    "galleryBanner": {
+        "color": "#191919",
+        "theme": "dark"
+    },
+    "activationEvents": [
+        "onCommand:extension.litIt"
+    ],
+    "main": "./out/src/extension",
+    "contributes": {
+        "commands": [{
+            "command": "extension.litIt",
+            "title": "Lit it!",
+            "description": "Add JSdocs for your JS code"
+        }]
+    },
+    "scripts": {
+        "vscode:prepublish": "tsc -p ./",
+        "compile": "tsc -watch -p ./",
+        "postinstall": "node ./node_modules/vscode/bin/install",
+        "pretest": "yarn tslint:quick-fix",
+        "test": "node ./node_modules/vscode/bin/test",
+        "tslint": "node_modules/.bin/tslint -c tslint.json './*.ts'",
+        "tslint:quick-fix": "node_modules/.bin/tslint -c tslint.json './*.ts' --fix"
+    },
+    "devDependencies": {
+        "chai": "^3.5.0",
+        "tslint": "^5.5.0",
+        "tslint-eslint-rules": "^4.1.1",
+        "typescript": "^2.0.3",
+        "vscode": "^1.0.0",
+        "mocha": "^2.3.3",
+        "@types/node": "^6.0.40",
+        "@types/mocha": "^2.2.32"
+    }
 }

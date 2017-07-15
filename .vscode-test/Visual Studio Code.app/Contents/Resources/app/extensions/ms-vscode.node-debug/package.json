@@ -1,10 +1,10 @@
 {
 	"name": "node-debug",
 	"displayName": "Node Debug",
-	"version": "1.8.15",
+	"version": "1.14.9",
 	"publisher": "ms-vscode",
 	"description": "%extension.description%",
-	"icon": "images/node-debug-icon.svg",
+	"icon": "images/node-debug-icon.png",
 	"categories": [
 		"Debuggers"
 	],
@@ -14,19 +14,21 @@
 	"license": "MIT",
 	"private": true,
 	"scripts": {
-		"prepublish": "node ./node_modules/gulp/bin/gulp.js build",
-		"build": "node ./node_modules/gulp/bin/gulp.js build",
-		"test": "node ./node_modules/mocha/bin/mocha --timeout 10000 -u tdd ./out/tests/",
-		"nodemon": "./node_modules/.bin/nodemon --debug --nolazy ./out/node/nodeDebug.js --server=4711",
+		"prepublish": "gulp build",
+		"build": "gulp build",
+		"test": "mocha --timeout 10000 -u tdd ./out/tests/",
+		"nodemon": "nodemon --debug --nolazy ./out/node/nodeDebug.js --server=4711",
 		"postinstall": "node ./node_modules/vscode/bin/install"
 	},
 	"engines": {
-		"vscode": "^1.8.0",
-		"node": "^6.3.0"
+		"vscode": "^1.13.0",
+		"node": "^7.4.0"
 	},
+	"extensionDependencies": [
+		"ms-vscode.node-debug2"
+	],
 	"dependencies": {
-		"vscode-debugprotocol": "^1.15.0",
-		"vscode-debugadapter": "^1.15.0",
+		"vscode-debugadapter": "^1.21.0",
 		"source-map": "0.5.6",
 		"vscode-nls": "^2.0.1",
 		"request-light": "^0.1.0",
@@ -52,27 +54,53 @@
 		"gulp-tsb": "^2.0.2",
 		"gulp-sourcemaps": "^1.9.1",
 		"gulp-filter": "^4.0.0",
-		"gulp-tslint": "^6.1.1",
+		"gulp-tslint": "^8.0.0",
 		"gulp-uglify": "^2.0.0",
-		"tslint-microsoft-contrib": "^2.0.10",
+		"tslint-microsoft-contrib": "^5.0.0",
 		"del": "^2.2.2",
 		"run-sequence": "^1.2.2",
 		"mocha": "^3.1.2",
-		"tslint": "^3.15.1",
-		"typescript": "^2.0.10",
+		"tslint": "^5.2.0",
+		"tsutils": "^1.8.0",
+		"typescript": "^2.2.1",
 		"vscode": "^1.0.3",
-		"vscode-nls-dev": "^2.0.1",
-		"vscode-debugadapter-testsupport": "^1.15.0",
+		"vscode-nls-dev": "^2.1.1",
+		"vscode-debugadapter-testsupport": "^1.21.0",
+		"vscode-debugprotocol": "^1.21.0",
 		"event-stream": "^3.3.4",
 		"nodemon": "^1.11.0",
-		"vsce": "^1.17.0"
+		"vsce": "^1.20.0"
 	},
-	"main": "./out/node/extension",
+	"main": "./out/node/extension/extension.js",
 	"activationEvents": [
-		"onCommand:extension.pickNodeProcess",
-		"onCommand:extension.node-debug.provideInitialConfigurations"
+		"onCommand:extension.node-debug.toggleSkippingFile",
+		"onCommand:extension.node-debug.pickLoadedScript",
+		"onCommand:extension.node-debug.provideInitialConfigurations",
+		"onCommand:extension.node-debug.startSession",
+		"onCommand:extension.pickNodeProcess"
 	],
 	"contributes": {
+		"menus": {
+			"debug/callstack/context": [{
+				"command": "extension.node-debug.toggleSkippingFile",
+				"group": "navigation",
+				"when": "inDebugMode && debugType == 'node'"
+			}]
+		},
+		"commands": [{
+			"command": "extension.node-debug.pickLoadedScript",
+			"title": "%open.loaded.script%",
+			"category": "Debug"
+		}, {
+			"command": "extension.node-debug.toggleSkippingFile",
+			"title": "%toggle.skipping.this.file%"
+		}],
+		"keybindings": [{
+			"command": "extension.node-debug.pickLoadedScript",
+			"key": "ctrl+f4",
+			"mac": "cmd+f4",
+			"when": "debugType == 'node'"
+		}],
 		"breakpoints": [{
 			"language": "javascript"
 		}, {
@@ -88,6 +116,13 @@
 			},
 			"aiKey": "AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217",
 			"initialConfigurations": "extension.node-debug.provideInitialConfigurations",
+			"languages": [
+				"javascript",
+				"typescript",
+				"javascriptreact",
+				"typescriptreact"
+			],
+			"startSessionCommand": "extension.node-debug.startSession",
 			"configurationSnippets": [{
 				"label": "%node.snippet.launch.label%",
 				"description": "%node.snippet.launch.description%",
@@ -95,8 +130,21 @@
 					"type": "node",
 					"request": "launch",
 					"name": "${2:Launch Program}",
-					"program": "^\"\\${workspaceRoot}/${1:app.js}\"",
-					"cwd": "^\"\\${workspaceRoot}\""
+					"program": "^\"\\${workspaceRoot}/${1:app.js}\""
+				}
+			}, {
+				"label": "%node.snippet.npm.label%",
+				"description": "%node.snippet.npm.description%",
+				"body": {
+					"type": "node",
+					"request": "launch",
+					"name": "${1:Launch via NPM}",
+					"runtimeExecutable": "npm",
+					"runtimeArgs": [
+						"run-script",
+						"debug"
+					],
+					"port": 5858
 				}
 			}, {
 				"label": "%node.snippet.attach.label%",
@@ -104,16 +152,117 @@
 				"body": {
 					"type": "node",
 					"request": "attach",
-					"name": "${2:Attach to Port}",
+					"name": "${1:Attach}",
 					"port": 5858
+				}
+			}, {
+				"label": "%node.snippet.remoteattach.label%",
+				"description": "%node.snippet.remoteattach.description%",
+				"body": {
+					"type": "node",
+					"request": "attach",
+					"name": "${1:Attach to Remote}",
+					"address": "${2:TCP/IP address of process to be debugged}",
+					"port": 5858,
+					"localRoot": "^\"\\${workspaceRoot}\"",
+					"remoteRoot": "${3:Absolute path to the remote directory containing the program}"
+				}
+			}, {
+				"label": "%node.snippet.attachProcess.label%",
+				"description": "%node.snippet.attachProcess.description%",
+				"body": {
+					"type": "node",
+					"request": "attach",
+					"name": "${1:Attach by Process ID}",
+					"processId": "^\"\\${command:PickProcess}\""
+				}
+			}, {
+				"label": "%node.snippet.nodemon.label%",
+				"description": "%node.snippet.nodemon.description%",
+				"body": {
+					"type": "node",
+					"request": "launch",
+					"name": "nodemon",
+					"runtimeExecutable": "nodemon",
+					"program": "^\"\\${workspaceRoot}/${1:app.js}\"",
+					"restart": true,
+					"console": "integratedTerminal",
+					"internalConsoleOptions": "neverOpen"
+				}
+			}, {
+				"label": "%node.snippet.mocha.label%",
+				"description": "%node.snippet.mocha.description%",
+				"body": {
+					"type": "node",
+					"request": "launch",
+					"name": "Mocha Tests",
+					"program": "^\"\\${workspaceRoot}/node_modules/mocha/bin/_mocha\"",
+					"args": [
+						"-u",
+						"tdd",
+						"--timeout",
+						"999999",
+						"--colors",
+						"^\"\\${workspaceRoot}/${1:test}\""
+					],
+					"internalConsoleOptions": "openOnSessionStart"
+				}
+			}, {
+				"label": "%node.snippet.yo.label%",
+				"description": "%node.snippet.yo.description%",
+				"body": {
+					"type": "node",
+					"request": "launch",
+					"name": "Yeoman ${1:generator}",
+					"program": "^\"\\${workspaceRoot}/node_modules/yo/lib/cli.js\"",
+					"args": [
+						"${1:generator}"
+					],
+					"console": "integratedTerminal",
+					"internalConsoleOptions": "neverOpen"
+				}
+			}, {
+				"label": "%node.snippet.gulp.label%",
+				"description": "%node.snippet.gulp.description%",
+				"body": {
+					"type": "node",
+					"request": "launch",
+					"name": "Gulp ${1:task}",
+					"program": "^\"\\${workspaceRoot}/node_modules/gulp/bin/gulp.js\"",
+					"args": [
+						"${1:task}"
+					]
+				}
+			}, {
+				"label": "%node.snippet.electron.label%",
+				"description": "%node.snippet.electron.description%",
+				"body": {
+					"type": "node",
+					"request": "launch",
+					"name": "Electron Main",
+					"runtimeExecutable": "^\"\\${workspaceRoot}/node_modules/.bin/electron\"",
+					"program": "^\"\\${workspaceRoot}/main.js\"",
+					"protocol": "legacy"
 				}
 			}],
 			"configurationAttributes": {
 				"launch": {
-					"required": [
-						"cwd"
-					],
 					"properties": {
+						"protocol": {
+							"type": "string",
+							"enum": [
+								"auto",
+								"inspector",
+								"legacy"
+							],
+							"enumDescriptions": [
+								"%node.protocol.auto.description%",
+								"%node.protocol.inspector.description%",
+								"%node.protocol.legacy.description%"
+							],
+							"description": "%node.protocol.description%",
+							"default": "legacy"
+						},
 						"program": {
 							"type": "string",
 							"description": "%node.launch.program.description%"
@@ -129,10 +278,16 @@
 							"default": true
 						},
 						"console": {
+							"type": "string",
 							"enum": [
 								"internalConsole",
 								"integratedTerminal",
 								"externalTerminal"
+							],
+							"enumDescriptions": [
+								"%node.launch.console.internalConsole.description%",
+								"%node.launch.console.integratedTerminal.description%",
+								"%node.launch.console.externalTerminal.description%"
 							],
 							"description": "%node.launch.console.description%",
 							"default": "internalConsole"
@@ -215,6 +370,27 @@
 							"description": "%node.timeout.description%",
 							"default": 10000
 						},
+						"restart": {
+							"type": "boolean",
+							"description": "%node.restart.description%",
+							"default": true
+						},
+						"localRoot": {
+							"type": [
+								"string",
+								"null"
+							],
+							"description": "%node.localRoot.description%",
+							"default": null
+						},
+						"remoteRoot": {
+							"type": [
+								"string",
+								"null"
+							],
+							"description": "%node.remoteRoot.description%",
+							"default": null
+						},
 						"smartStep": {
 							"type": "boolean",
 							"description": "%smartStep.description%",
@@ -227,15 +403,43 @@
 								"type": "string"
 							},
 							"default": []
+						},
+						"showAsyncStacks": {
+							"type": "boolean",
+							"description": "%node.showAsyncStacks.description%",
+							"default": true
+						},
+						"trace": {
+							"type": [
+								"boolean",
+								"string"
+							],
+							"description": "%trace.description%",
+							"default": true
 						}
 					}
 				},
 				"attach": {
 					"properties": {
+						"protocol": {
+							"type": "string",
+							"enum": [
+								"auto",
+								"inspector",
+								"legacy"
+							],
+							"enumDescriptions": [
+								"%node.protocol.auto.description%",
+								"%node.protocol.inspector.description%",
+								"%node.protocol.legacy.description%"
+							],
+							"description": "%node.protocol.description%",
+							"default": "legacy"
+						},
 						"processId": {
 							"type": "string",
 							"description": "%node.attach.processId.description%",
-							"default": "${command.PickProcess}"
+							"default": "${command:PickProcess}"
 						},
 						"port": {
 							"type": "number",
@@ -254,7 +458,7 @@
 						},
 						"restart": {
 							"type": "boolean",
-							"description": "%node.attach.restart.description%",
+							"description": "%node.restart.description%",
 							"default": true
 						},
 						"sourceMaps": {
@@ -288,7 +492,7 @@
 								"string",
 								"null"
 							],
-							"description": "%node.attach.localRoot.description%",
+							"description": "%node.localRoot.description%",
 							"default": null
 						},
 						"remoteRoot": {
@@ -296,7 +500,7 @@
 								"string",
 								"null"
 							],
-							"description": "%node.attach.remoteRoot.description%",
+							"description": "%node.remoteRoot.description%",
 							"default": null
 						},
 						"smartStep": {
@@ -311,6 +515,19 @@
 								"type": "string"
 							},
 							"default": []
+						},
+						"showAsyncStacks": {
+							"type": "boolean",
+							"description": "%node.showAsyncStacks.description%",
+							"default": true
+						},
+						"trace": {
+							"type": [
+								"boolean",
+								"string"
+							],
+							"description": "%trace.description%",
+							"default": true
 						}
 					}
 				}
@@ -321,19 +538,23 @@
 			"program": "./out/node/nodeDebug.js",
 			"runtime": "node",
 			"aiKey": "AIF-d9b70cd4-b9f9-4d70-929b-a071c400b217",
-			"initialConfigurations": [{
-				"type": "extensionHost",
-				"request": "launch",
-				"name": "%extensionHost.launch.config.name%",
-				"runtimeExecutable": "${execPath}",
-				"args": [
-					"--extensionDevelopmentPath=${workspaceRoot}"
-				],
-				"sourceMaps": true,
-				"outFiles": [
-					"${workspaceRoot}/out/**/*.js"
-				],
-				"preLaunchTask": "npm"
+			"configurationSnippets": [{
+				"label": "%extensionHost.snippet.launch.label%",
+				"description": "%extensionHost.snippet.launch.description%",
+				"body": {
+					"type": "extensionHost",
+					"request": "launch",
+					"name": "%extensionHost.launch.config.name%",
+					"runtimeExecutable": "^\"\\${execPath}\"",
+					"args": [
+						"^\"--extensionDevelopmentPath=\\${workspaceRoot}\""
+					],
+					"sourceMaps": true,
+					"outFiles": [
+						"^\"\\${workspaceRoot}/out/**/*.js\""
+					],
+					"preLaunchTask": "npm"
+				}
 			}],
 			"configurationAttributes": {
 				"launch": {
@@ -359,6 +580,14 @@
 							"default": [
 								"--extensionDevelopmentPath=${workspaceRoot}"
 							]
+						},
+						"env": {
+							"type": "object",
+							"additionalProperties": {
+								"type": "string"
+							},
+							"description": "%extensionHost.launch.env.description%",
+							"default": {}
 						},
 						"stopOnEntry": {
 							"type": "boolean",
@@ -400,6 +629,14 @@
 								"type": "string"
 							},
 							"default": []
+						},
+						"trace": {
+							"type": [
+								"boolean",
+								"string"
+							],
+							"description": "%trace.description%",
+							"default": true
 						}
 					}
 				}

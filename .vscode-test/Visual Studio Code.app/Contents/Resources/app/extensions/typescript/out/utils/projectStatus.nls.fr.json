@@ -1,7 +1,7 @@
 [
-	"Pour activer JavaScript /TypeScript IntelliSense, excluez les dossiers contenant de nombreux fichiers, comme : {0}",
-	"Pour activer JavaScript/TypeScript IntelliSense, excluez les dossiers volumineux contenant des fichiers sources inutiles.",
+	"Pour activer les fonctionnalités de langage JavaScript/TypeScript à l'échelle du projet, excluez les dossiers contenant de nombreux fichiers, par exemple : {0}",
+	"Pour activer les fonctionnalités de langage JavaScript/TypeScript à l'échelle du projet, excluez les dossiers volumineux contenant des fichiers sources inutilisés.",
 	"Configurer les exclusions",
-	"Configurer les exclusions",
-	"Pour activer JavaScript/TypeScript IntelliSense, excluez les dossiers volumineux contenant des fichiers sources inutiles."
+	"Pour activer les fonctionnalités de langage JavaScript/TypeScript à l'échelle du projet, excluez les dossiers volumineux contenant des fichiers sources inutilisés.",
+	"Configurer les exclusions"
 ]

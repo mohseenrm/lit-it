@@ -1,13 +1,19 @@
+"use strict";
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-"use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
 /**
  * A helper to prevent accumulation of sequential async tasks.
  *
@@ -148,8 +154,9 @@ exports.Delayer = Delayer;
 var ThrottledDelayer = (function (_super) {
     __extends(ThrottledDelayer, _super);
     function ThrottledDelayer(defaultDelay) {
-        _super.call(this, defaultDelay);
-        this.throttler = new Throttler();
+        var _this = _super.call(this, defaultDelay) || this;
+        _this.throttler = new Throttler();
+        return _this;
     }
     ThrottledDelayer.prototype.trigger = function (promiseFactory, delay) {
         var _this = this;
@@ -158,4 +165,4 @@ var ThrottledDelayer = (function (_super) {
     return ThrottledDelayer;
 }(Delayer));
 exports.ThrottledDelayer = ThrottledDelayer;
-//# sourceMappingURL=https://ticino.blob.core.windows.net/sourcemaps/ee428b0eead68bf0fb99ab5fdc4439be227b6281/extensions/php/out/features/utils/async.js.map
+//# sourceMappingURL=https://ticino.blob.core.windows.net/sourcemaps/2648980a697a4c8fb5777dcfb2ab110cec8a2f58/extensions/php/out/features/utils/async.js.map

@@ -3,16 +3,17 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 'use strict';
-var vscode_1 = require('vscode');
-var markedTextUtil_1 = require('./markedTextUtil');
-var nls = require('vscode-nls');
+Object.defineProperty(exports, "__esModule", { value: true });
+var vscode_1 = require("vscode");
+var markedTextUtil_1 = require("./markedTextUtil");
+var nls = require("vscode-nls");
 var localize = nls.loadMessageBundle(__filename);
 var LIMIT = 40;
 var PackageJSONContribution = (function () {
     function PackageJSONContribution(xhr) {
         this.xhr = xhr;
         this.mostDependedOn = ['lodash', 'async', 'underscore', 'request', 'commander', 'express', 'debug', 'chalk', 'colors', 'q', 'coffee-script',
-            'mkdirp', 'optimist', 'through2', 'yeoman-generator', 'moment', 'bluebird', 'glob', 'gulp-util', 'minimist', 'cheerio', 'jade', 'redis', 'node-uuid',
+            'mkdirp', 'optimist', 'through2', 'yeoman-generator', 'moment', 'bluebird', 'glob', 'gulp-util', 'minimist', 'cheerio', 'pug', 'redis', 'node-uuid',
             'socket', 'io', 'uglify-js', 'winston', 'through', 'fs-extra', 'handlebars', 'body-parser', 'rimraf', 'mime', 'semver', 'mongodb', 'jquery',
             'grunt', 'connect', 'yosay', 'underscore', 'string', 'xml2js', 'ejs', 'mongoose', 'marked', 'extend', 'mocha', 'superagent', 'js-yaml', 'xtend',
             'shelljs', 'gulp', 'yargs', 'browserify', 'minimatch', 'react', 'less', 'prompt', 'inquirer', 'ws', 'event-stream', 'inherits', 'mysql', 'esprima',
@@ -55,7 +56,7 @@ var PackageJSONContribution = (function () {
                                         var name = keys[0];
                                         var insertText = new vscode_1.SnippetString().appendText(JSON.stringify(name));
                                         if (addValue) {
-                                            insertText.appendText(': ').appendPlaceholder('*');
+                                            insertText.appendText(': "').appendPlaceholder('').appendText('"');
                                             if (!isLast) {
                                                 insertText.appendText(',');
                                             }
@@ -74,6 +75,7 @@ var PackageJSONContribution = (function () {
                             }
                         }
                         catch (e) {
+                            // ignore
                         }
                     }
                     else {
@@ -89,7 +91,7 @@ var PackageJSONContribution = (function () {
                 this.mostDependedOn.forEach(function (name) {
                     var insertText = new vscode_1.SnippetString().appendText(JSON.stringify(name));
                     if (addValue) {
-                        insertText.appendText(': ').appendPlaceholder('*');
+                        insertText.appendText(': "').appendPlaceholder('').appendText('"');
                         if (!isLast) {
                             insertText.appendText(',');
                         }
@@ -140,6 +142,7 @@ var PackageJSONContribution = (function () {
                         }
                     }
                     catch (e) {
+                        // ignore
                     }
                     return 0;
                 }, function (error) {
@@ -185,6 +188,7 @@ var PackageJSONContribution = (function () {
                 }
             }
             catch (e) {
+                // ignore
             }
             return [];
         }, function (error) {
@@ -208,4 +212,4 @@ var PackageJSONContribution = (function () {
     return PackageJSONContribution;
 }());
 exports.PackageJSONContribution = PackageJSONContribution;
-//# sourceMappingURL=https://ticino.blob.core.windows.net/sourcemaps/ee428b0eead68bf0fb99ab5fdc4439be227b6281/extensions/javascript/out/features/packageJSONContribution.js.map
+//# sourceMappingURL=https://ticino.blob.core.windows.net/sourcemaps/2648980a697a4c8fb5777dcfb2ab110cec8a2f58/extensions/javascript/out/features/packageJSONContribution.js.map

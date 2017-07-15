@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var Path = require("path");
 var FS = require("fs");
 var CRYPTO = require("crypto");
@@ -323,7 +324,7 @@ var SourceMaps = (function () {
                     reject(err);
                 }
                 else {
-                    resolve(fileContents);
+                    resolve(PathUtils.stripBOM(fileContents));
                 }
             });
         });
@@ -333,6 +334,8 @@ var SourceMaps = (function () {
             PathUtils.mkdirs(Path.dirname(path));
             FS.writeFile(path, data, function (err) {
                 if (err) {
+                    // ignore error
+                    // reject(err);
                 }
                 resolve(data);
             });
@@ -376,6 +379,7 @@ var SourceMap = (function () {
             this._smc = new SM.SourceMapConsumer(sm);
         }
         catch (e) {
+            // ignore exception and leave _smc undefined
         }
     }
     /*

@@ -1,11 +1,12 @@
+"use strict";
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-"use strict";
-const Path = require('path');
-const FS = require('fs');
-const CP = require('child_process');
+Object.defineProperty(exports, "__esModule", { value: true });
+const Path = require("path");
+const FS = require("fs");
+const CP = require("child_process");
 /**
  * The input paths must use the path syntax of the underlying operating system.
  */
@@ -98,6 +99,7 @@ function realPath(path) {
         }
     }
     catch (error) {
+        // silently ignore error
     }
     return null;
 }
@@ -204,10 +206,12 @@ function isOnPath(program) {
                 CP.execSync(`${WHERE} ${program}`);
             }
             else {
+                // do not report error if 'where' doesn't exist
             }
             return true;
         }
         catch (e) {
+            // ignore
         }
     }
     else {
@@ -217,6 +221,7 @@ function isOnPath(program) {
                 CP.execSync(`${WHICH} '${program}'`);
             }
             else {
+                // do not report error if 'which' doesn't exist
             }
             return true;
         }
@@ -226,5 +231,24 @@ function isOnPath(program) {
     return false;
 }
 exports.isOnPath = isOnPath;
+function findExecutable(program) {
+    if (process.platform === 'win32' && !Path.extname(program)) {
+        const PATHEXT = process.env['PATHEXT'];
+        if (PATHEXT) {
+            const executableExtensions = PATHEXT.split(';');
+            for (const extension of executableExtensions) {
+                const path = program + extension;
+                if (FS.existsSync(path)) {
+                    return path;
+                }
+            }
+        }
+    }
+    if (FS.existsSync(program)) {
+        return program;
+    }
+    return undefined;
+}
+exports.findExecutable = findExecutable;
 
 //# sourceMappingURL=pathUtils.js.map

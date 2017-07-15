@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 'use strict';
+Object.defineProperty(exports, "__esModule", { value: true });
 function getWordAtText(text, offset, wordDefinition) {
     var lineStart = offset;
     while (lineStart > 0 && !isNewlineCharacter(text.charCodeAt(lineStart - 1))) {
@@ -51,9 +52,14 @@ function isWhitespaceOnly(str) {
     return /^\s*$/.test(str);
 }
 exports.isWhitespaceOnly = isWhitespaceOnly;
+function isEOL(content, offset) {
+    return isNewlineCharacter(content.charCodeAt(offset));
+}
+exports.isEOL = isEOL;
 var CR = '\r'.charCodeAt(0);
 var NL = '\n'.charCodeAt(0);
 function isNewlineCharacter(charCode) {
     return charCode === CR || charCode === NL;
-}
-//# sourceMappingURL=https://ticino.blob.core.windows.net/sourcemaps/ee428b0eead68bf0fb99ab5fdc4439be227b6281/extensions/html/server/out/utils/strings.js.map
+}
+exports.isNewlineCharacter = isNewlineCharacter;
+//# sourceMappingURL=https://ticino.blob.core.windows.net/sourcemaps/2648980a697a4c8fb5777dcfb2ab110cec8a2f58/extensions/html/server/out/utils/strings.js.map

@@ -1,11 +1,12 @@
+"use strict";
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-'use strict';
-var semver = require('semver');
-var API = (function () {
-    function API(_versionString) {
+Object.defineProperty(exports, "__esModule", { value: true });
+const semver = require("semver");
+class API {
+    constructor(_versionString) {
         this._versionString = _versionString;
         this._version = semver.valid(_versionString);
         if (!this._version) {
@@ -14,35 +15,42 @@ var API = (function () {
         else {
             // Cut of any prerelease tag since we sometimes consume those
             // on purpose.
-            var index = _versionString.indexOf('-');
+            let index = _versionString.indexOf('-');
             if (index >= 0) {
                 this._version = this._version.substr(0, index);
             }
         }
     }
-    Object.defineProperty(API.prototype, "versionString", {
-        get: function () {
-            return this._versionString;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    API.prototype.has1xFeatures = function () {
-        return semver.gte(this._version, '1.0.0');
-    };
-    API.prototype.has203Features = function () {
+    get versionString() {
+        return this._versionString;
+    }
+    has203Features() {
         return semver.gte(this._version, '2.0.3');
-    };
-    API.prototype.has206Features = function () {
+    }
+    has206Features() {
         return semver.gte(this._version, '2.0.6');
-    };
-    API.prototype.has208Features = function () {
+    }
+    has208Features() {
         return semver.gte(this._version, '2.0.8');
-    };
-    API.prototype.has213Features = function () {
+    }
+    has213Features() {
         return semver.gte(this._version, '2.1.3');
-    };
-    return API;
-}());
+    }
+    has220Features() {
+        return semver.gte(this._version, '2.2.0');
+    }
+    has222Features() {
+        return semver.gte(this._version, '2.2.2');
+    }
+    has230Features() {
+        return semver.gte(this._version, '2.3.0');
+    }
+    has234Features() {
+        return semver.gte(this._version, '2.3.4');
+    }
+    has240Features() {
+        return semver.gte(this._version, '2.4.0');
+    }
+}
 exports.API = API;
-//# sourceMappingURL=https://ticino.blob.core.windows.net/sourcemaps/ee428b0eead68bf0fb99ab5fdc4439be227b6281/extensions/typescript/out/typescriptService.js.map
+//# sourceMappingURL=https://ticino.blob.core.windows.net/sourcemaps/2648980a697a4c8fb5777dcfb2ab110cec8a2f58/extensions/typescript/out/typescriptService.js.map

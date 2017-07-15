@@ -1,47 +1,45 @@
+"use strict";
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-'use strict';
-var vscode = require('vscode');
-var versionBarEntry = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, Number.MIN_VALUE);
-var _enable = false;
-function showHideStatus() {
-    if (!versionBarEntry || !_enable) {
-        return;
+Object.defineProperty(exports, "__esModule", { value: true });
+const vscode = require("vscode");
+class VersionStatus extends vscode.Disposable {
+    constructor() {
+        super(() => this.dispose());
+        this.versionBarEntry = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, Number.MIN_VALUE);
+        this.onChangeEditorSub = vscode.window.onDidChangeActiveTextEditor(this.showHideStatus, this);
     }
-    if (!vscode.window.activeTextEditor) {
-        versionBarEntry.hide();
-        return;
+    dispose() {
+        this.versionBarEntry.dispose();
+        this.onChangeEditorSub.dispose();
     }
-    var doc = vscode.window.activeTextEditor.document;
-    if (vscode.languages.match('javascript', doc) || vscode.languages.match('javascriptreact', doc)
-        || vscode.languages.match('typescript', doc) || vscode.languages.match('typescriptreact', doc)) {
-        versionBarEntry.show();
-        return;
+    showHideStatus() {
+        if (!this.versionBarEntry) {
+            return;
+        }
+        if (!vscode.window.activeTextEditor) {
+            this.versionBarEntry.hide();
+            return;
+        }
+        let doc = vscode.window.activeTextEditor.document;
+        if (vscode.languages.match('typescript', doc) || vscode.languages.match('typescriptreact', doc)) {
+            this.versionBarEntry.show();
+            return;
+        }
+        if (!vscode.window.activeTextEditor.viewColumn) {
+            // viewColumn is undefined for the debug/output panel, but we still want
+            // to show the version info
+            return;
+        }
+        this.versionBarEntry.hide();
     }
-    versionBarEntry.hide();
+    setInfo(message, tooltip) {
+        this.versionBarEntry.text = message;
+        this.versionBarEntry.tooltip = tooltip;
+        this.versionBarEntry.command = 'typescript.selectTypeScriptVersion';
+    }
 }
-exports.showHideStatus = showHideStatus;
-function disposeStatus() {
-    if (versionBarEntry) {
-        versionBarEntry.dispose();
-    }
-}
-exports.disposeStatus = disposeStatus;
-function setInfo(message, tooltip) {
-    versionBarEntry.text = message;
-    versionBarEntry.tooltip = tooltip;
-    var color = 'white';
-    versionBarEntry.color = color;
-    if (_enable) {
-        versionBarEntry.show();
-    }
-}
-exports.setInfo = setInfo;
-function enable(value) {
-    _enable = value;
-    showHideStatus();
-}
-exports.enable = enable;
-//# sourceMappingURL=https://ticino.blob.core.windows.net/sourcemaps/ee428b0eead68bf0fb99ab5fdc4439be227b6281/extensions/typescript/out/utils/versionStatus.js.map
+exports.default = VersionStatus;
+//# sourceMappingURL=https://ticino.blob.core.windows.net/sourcemaps/2648980a697a4c8fb5777dcfb2ab110cec8a2f58/extensions/typescript/out/utils/versionStatus.js.map

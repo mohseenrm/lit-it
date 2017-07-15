@@ -1,21 +1,22 @@
+"use strict";
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-'use strict';
-var DefaultSize = 8192;
-var ContentLength = 'Content-Length: ';
-var ContentLengthSize = Buffer.byteLength(ContentLength, 'utf8');
-var Blank = new Buffer(' ', 'utf8')[0];
-var BackslashR = new Buffer('\r', 'utf8')[0];
-var BackslashN = new Buffer('\n', 'utf8')[0];
-var ProtocolBuffer = (function () {
-    function ProtocolBuffer() {
+Object.defineProperty(exports, "__esModule", { value: true });
+const DefaultSize = 8192;
+const ContentLength = 'Content-Length: ';
+const ContentLengthSize = Buffer.byteLength(ContentLength, 'utf8');
+const Blank = new Buffer(' ', 'utf8')[0];
+const BackslashR = new Buffer('\r', 'utf8')[0];
+const BackslashN = new Buffer('\n', 'utf8')[0];
+class ProtocolBuffer {
+    constructor() {
         this.index = 0;
         this.buffer = new Buffer(DefaultSize);
     }
-    ProtocolBuffer.prototype.append = function (data) {
-        var toAppend = null;
+    append(data) {
+        let toAppend = null;
         if (Buffer.isBuffer(data)) {
             toAppend = data;
         }
@@ -26,7 +27,7 @@ var ProtocolBuffer = (function () {
             toAppend.copy(this.buffer, this.index, 0, toAppend.length);
         }
         else {
-            var newSize = (Math.ceil((this.index + toAppend.length) / DefaultSize) + 1) * DefaultSize;
+            let newSize = (Math.ceil((this.index + toAppend.length) / DefaultSize) + 1) * DefaultSize;
             if (this.index === 0) {
                 this.buffer = new Buffer(newSize);
                 toAppend.copy(this.buffer, 0, 0, toAppend.length);
@@ -36,10 +37,10 @@ var ProtocolBuffer = (function () {
             }
         }
         this.index += toAppend.length;
-    };
-    ProtocolBuffer.prototype.tryReadContentLength = function () {
-        var result = -1;
-        var current = 0;
+    }
+    tryReadContentLength() {
+        let result = -1;
+        let current = 0;
         // we are utf8 encoding...
         while (current < this.index && (this.buffer[current] === Blank || this.buffer[current] === BackslashR || this.buffer[current] === BackslashN)) {
             current++;
@@ -48,133 +49,67 @@ var ProtocolBuffer = (function () {
             return result;
         }
         current += ContentLengthSize;
-        var start = current;
+        let start = current;
         while (current < this.index && this.buffer[current] !== BackslashR) {
             current++;
         }
         if (current + 3 >= this.index || this.buffer[current + 1] !== BackslashN || this.buffer[current + 2] !== BackslashR || this.buffer[current + 3] !== BackslashN) {
             return result;
         }
-        var data = this.buffer.toString('utf8', start, current);
+        let data = this.buffer.toString('utf8', start, current);
         result = parseInt(data);
         this.buffer = this.buffer.slice(current + 4);
         this.index = this.index - (current + 4);
         return result;
-    };
-    ProtocolBuffer.prototype.tryReadContent = function (length) {
+    }
+    tryReadContent(length) {
         if (this.index < length) {
             return null;
         }
-        var result = this.buffer.toString('utf8', 0, length);
-        var sourceStart = length;
+        let result = this.buffer.toString('utf8', 0, length);
+        let sourceStart = length;
         while (sourceStart < this.index && (this.buffer[sourceStart] === BackslashR || this.buffer[sourceStart] === BackslashN)) {
             sourceStart++;
         }
         this.buffer.copy(this.buffer, 0, sourceStart);
         this.index = this.index - sourceStart;
         return result;
-    };
-    ProtocolBuffer.prototype.tryReadLine = function () {
-        var end = 0;
-        while (end < this.index && this.buffer[end] !== BackslashR && this.buffer[end] !== BackslashN) {
-            end++;
-        }
-        if (end >= this.index) {
-            return null;
-        }
-        var result = this.buffer.toString('utf8', 0, end);
-        while (end < this.index && (this.buffer[end] === BackslashR || this.buffer[end] === BackslashN)) {
-            end++;
-        }
-        if (this.index === end) {
-            this.index = 0;
-        }
-        else {
-            this.buffer.copy(this.buffer, 0, end);
-            this.index = this.index - end;
-        }
-        return result;
-    };
-    Object.defineProperty(ProtocolBuffer.prototype, "numberOfBytes", {
-        get: function () {
-            return this.index;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    return ProtocolBuffer;
-}());
-(function (ReaderType) {
-    ReaderType[ReaderType["Length"] = 0] = "Length";
-    ReaderType[ReaderType["Line"] = 1] = "Line";
-})(exports.ReaderType || (exports.ReaderType = {}));
-var ReaderType = exports.ReaderType;
-var Reader = (function () {
-    function Reader(readable, callback, type) {
-        var _this = this;
-        if (type === void 0) { type = ReaderType.Length; }
+    }
+}
+class Reader {
+    constructor(readable, callback, onError = () => ({})) {
+        this.onError = onError;
         this.readable = readable;
         this.buffer = new ProtocolBuffer();
         this.callback = callback;
         this.nextMessageLength = -1;
-        if (type === ReaderType.Length) {
-            this.readable.on('data', function (data) {
-                _this.onLengthData(data);
-            });
-        }
-        else if (type === ReaderType.Line) {
-            this.readable.on('data', function (data) {
-                _this.onLineData(data);
-            });
-        }
+        this.readable.on('data', (data) => {
+            this.onLengthData(data);
+        });
     }
-    Reader.prototype.onLengthData = function (data) {
-        this.buffer.append(data);
-        while (true) {
-            if (this.nextMessageLength === -1) {
-                this.nextMessageLength = this.buffer.tryReadContentLength();
+    onLengthData(data) {
+        try {
+            this.buffer.append(data);
+            while (true) {
                 if (this.nextMessageLength === -1) {
+                    this.nextMessageLength = this.buffer.tryReadContentLength();
+                    if (this.nextMessageLength === -1) {
+                        return;
+                    }
+                }
+                const msg = this.buffer.tryReadContent(this.nextMessageLength);
+                if (msg === null) {
                     return;
                 }
+                this.nextMessageLength = -1;
+                const json = JSON.parse(msg);
+                this.callback(json);
             }
-            var msg = this.buffer.tryReadContent(this.nextMessageLength);
-            if (msg === null) {
-                return;
-            }
-            this.nextMessageLength = -1;
-            var json = JSON.parse(msg);
-            this.callback(json);
         }
-    };
-    Reader.prototype.onLineData = function (data) {
-        this.buffer.append(data);
-        while (true) {
-            var msg = this.buffer.tryReadLine();
-            if (msg === null) {
-                return;
-            }
-            this.callback(JSON.parse(msg));
+        catch (e) {
+            this.onError(e);
         }
-    };
-    return Reader;
-}());
-exports.Reader = Reader;
-var Writer = (function () {
-    function Writer(writable) {
-        this.writable = writable;
     }
-    Writer.prototype.write = function (msg) {
-        var json = JSON.stringify(msg);
-        var buffer = [
-            ContentLength,
-            Buffer.byteLength(json, 'utf8').toString(),
-            '\r\n\r\n',
-            json,
-            '\r\n'
-        ];
-        this.writable.write(buffer.join(''), 'utf8');
-    };
-    return Writer;
-}());
-exports.Writer = Writer;
-//# sourceMappingURL=https://ticino.blob.core.windows.net/sourcemaps/ee428b0eead68bf0fb99ab5fdc4439be227b6281/extensions/typescript/out/utils/wireProtocol.js.map
+}
+exports.Reader = Reader;
+//# sourceMappingURL=https://ticino.blob.core.windows.net/sourcemaps/2648980a697a4c8fb5777dcfb2ab110cec8a2f58/extensions/typescript/out/utils/wireProtocol.js.map

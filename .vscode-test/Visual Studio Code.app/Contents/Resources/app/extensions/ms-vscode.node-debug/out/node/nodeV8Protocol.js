@@ -3,11 +3,17 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 "use strict";
-var __extends = (this && this.__extends) || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
-};
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
+Object.defineProperty(exports, "__esModule", { value: true });
 var EE = require("events");
 var nls = require("vscode-nls");
 var localize = nls.loadMessageBundle(__filename);
@@ -102,6 +108,10 @@ var NodeV8Protocol = (function (_super) {
             });
         });
     };
+    NodeV8Protocol.prototype.backtrace = function (args, timeout) {
+        if (timeout === void 0) { timeout = NodeV8Protocol.TIMEOUT; }
+        return this.command2('backtrace', args);
+    };
     NodeV8Protocol.prototype.restartFrame = function (args, timeout) {
         if (timeout === void 0) { timeout = NodeV8Protocol.TIMEOUT; }
         return this.command2('restartframe', args);
@@ -143,6 +153,7 @@ var NodeV8Protocol = (function (_super) {
     };
     NodeV8Protocol.prototype.sendResponse = function (response) {
         if (response.seq > 0) {
+            // console.error('attempt to send more than one response for command {0}', response.command);
         }
         else {
             this.send('response', response);
@@ -259,7 +270,7 @@ var NodeV8Protocol = (function (_super) {
                                     this.embeddedHostVersion = (parseInt(match[1]) * 100 + parseInt(match[2])) * 100 + parseInt(match[3]);
                                 }
                                 else if (pair[1] === 'Electron') {
-                                    this.embeddedHostVersion = 60300; // TODO this needs to be detected in a smarter way by looking at the V8 version in Electron
+                                    this.embeddedHostVersion = 60500; // TODO this needs to be detected in a smarter way by looking at the V8 version in Electron
                                 }
                                 var match1 = pair[1].match(/node\s(v\d+\.\d+\.\d+)/);
                                 if (match1 && match1.length === 2) {

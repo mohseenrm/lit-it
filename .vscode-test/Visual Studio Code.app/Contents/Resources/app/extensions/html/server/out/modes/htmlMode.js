@@ -3,7 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 'use strict';
-var languageModelCache_1 = require('../languageModelCache');
+Object.defineProperty(exports, "__esModule", { value: true });
+var languageModelCache_1 = require("../languageModelCache");
 function getHTMLMode(htmlLanguageService) {
     var settings = {};
     var htmlDocuments = languageModelCache_1.getLanguageModelCache(10, 60, function (document) { return htmlLanguageService.parseHTMLDocument(document); });
@@ -15,7 +16,7 @@ function getHTMLMode(htmlLanguageService) {
             settings = options && options.html;
         },
         doComplete: function (document, position) {
-            var options = settings && settings.html && settings.html.suggest;
+            var options = settings && settings.suggest;
             return htmlLanguageService.doComplete(document, position, htmlDocuments.get(document), options);
         },
         doHover: function (document, position) {
@@ -26,6 +27,9 @@ function getHTMLMode(htmlLanguageService) {
         },
         findDocumentLinks: function (document, documentContext) {
             return htmlLanguageService.findDocumentLinks(document, documentContext);
+        },
+        findDocumentSymbols: function (document) {
+            return htmlLanguageService.findDocumentSymbols(document, htmlDocuments.get(document));
         },
         format: function (document, range, formatParams) {
             var formatSettings = settings && settings.format;
@@ -55,4 +59,4 @@ function merge(src, dst) {
     }
     return dst;
 }
-//# sourceMappingURL=https://ticino.blob.core.windows.net/sourcemaps/ee428b0eead68bf0fb99ab5fdc4439be227b6281/extensions/html/server/out/modes/htmlMode.js.map
+//# sourceMappingURL=https://ticino.blob.core.windows.net/sourcemaps/2648980a697a4c8fb5777dcfb2ab110cec8a2f58/extensions/html/server/out/modes/htmlMode.js.map

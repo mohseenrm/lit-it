@@ -1,0 +1,74 @@
+{
+    "defaultSeverity": "error",
+    "extends": [
+        "tslint:recommended",
+        "tslint-eslint-rules"
+    ],
+    "jsRules": {},
+    "rules": {
+        "ter-indent": [
+            true,
+            4
+        ],
+        "only-arrow-functions": [
+            true,
+            "allow-named-functions"
+        ],
+        "quotemark": [
+            true,
+            "single",
+            "jsx-double"
+        ],
+        "trailing-comma": [
+            false
+        ],
+        "object-literal-sort-keys": [
+            false
+        ],
+        "ordered-imports": [
+            false
+        ],
+        "prefer-const": [
+            true
+        ],
+        "no-console": [
+            false
+        ],
+        "max-line-length": [
+            false
+        ],
+        "no-default-export": false,
+        "no-require-imports": true,
+        "align": [
+            true, 
+            "parameters", 
+            "statements"
+        ],
+        "no-irregular-whitespace": true,
+        "no-trailing-whitespace": [
+            true, 
+            "ignore-jsdoc",
+            "ignore-comments"
+        ],
+        "ordered-imports": true,
+        "semicolon": [
+            true, 
+            "always"
+        ],
+        "space-before-function-paren": [
+            true, 
+            "always"
+        ],
+        "whitespace": [
+            true, 
+            "check-branch", 
+            "check-operator", 
+            "check-typecast",
+            "check-decl",
+            "check-module",
+            "check-preblock",
+            "check-separator"
+        ]
+    },
+    "rulesDirectory": []
+}

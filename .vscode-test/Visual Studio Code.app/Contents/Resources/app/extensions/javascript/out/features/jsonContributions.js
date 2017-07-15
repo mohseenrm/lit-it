@@ -3,17 +3,18 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 'use strict';
-var jsonc_parser_1 = require('jsonc-parser');
-var path_1 = require('path');
-var bowerJSONContribution_1 = require('./bowerJSONContribution');
-var packageJSONContribution_1 = require('./packageJSONContribution');
-var vscode_1 = require('vscode');
+Object.defineProperty(exports, "__esModule", { value: true });
+var jsonc_parser_1 = require("jsonc-parser");
+var path_1 = require("path");
+var bowerJSONContribution_1 = require("./bowerJSONContribution");
+var packageJSONContribution_1 = require("./packageJSONContribution");
+var vscode_1 = require("vscode");
 function addJSONProviders(xhr) {
     var contributions = [new packageJSONContribution_1.PackageJSONContribution(xhr), new bowerJSONContribution_1.BowerJSONContribution(xhr)];
     var subscriptions = [];
     contributions.forEach(function (contribution) {
         var selector = contribution.getDocumentSelector();
-        subscriptions.push(vscode_1.languages.registerCompletionItemProvider(selector, new JSONCompletionItemProvider(contribution), '.', '$'));
+        subscriptions.push(vscode_1.languages.registerCompletionItemProvider(selector, new JSONCompletionItemProvider(contribution), '"', ':'));
         subscriptions.push(vscode_1.languages.registerHoverProvider(selector, new JSONHoverProvider(contribution)));
     });
     return vscode_1.Disposable.from.apply(vscode_1.Disposable, subscriptions);
@@ -131,4 +132,4 @@ var JSONCompletionItemProvider = (function () {
     return JSONCompletionItemProvider;
 }());
 exports.JSONCompletionItemProvider = JSONCompletionItemProvider;
-//# sourceMappingURL=https://ticino.blob.core.windows.net/sourcemaps/ee428b0eead68bf0fb99ab5fdc4439be227b6281/extensions/javascript/out/features/jsonContributions.js.map
+//# sourceMappingURL=https://ticino.blob.core.windows.net/sourcemaps/2648980a697a4c8fb5777dcfb2ab110cec8a2f58/extensions/javascript/out/features/jsonContributions.js.map

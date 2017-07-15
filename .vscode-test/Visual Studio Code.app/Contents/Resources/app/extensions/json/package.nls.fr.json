@@ -1,8 +1,10 @@
 {
-	"json.schemas.desc": "Associate schemas to JSON files in the current project",
-	"json.schemas.url.desc": "A URL to a schema or a relative path to a schema in the current directory",
-	"json.schemas.fileMatch.desc": "An array of file patterns to match against when resolving JSON files to schemas.",
-	"json.schemas.fileMatch.item.desc": "A file pattern that can contain '*' to match against when resolving JSON files to schemas.",
-	"json.schemas.schema.desc": "The schema definition for the given URL. The schema only needs to be provided to avoid accesses to the schema URL.",
-	"json.format.enable.desc": "Enable/disable default JSON formatter (requires restart)"
+	"json.schemas.desc": "Associer les schémas aux fichiers JSON dans le projet actif",
+	"json.schemas.url.desc": "URL de schéma ou chemin relatif d'un schéma dans le répertoire actif",
+	"json.schemas.fileMatch.desc": "Tableau de modèles de fichiers pour la recherche de correspondances durant la résolution de fichiers JSON en schémas.",
+	"json.schemas.fileMatch.item.desc": "Modèle de fichier pouvant contenir '*' pour la recherche de correspondances durant la résolution de fichiers JSON en schémas.",
+	"json.schemas.schema.desc": "Définition de schéma pour l'URL indiquée. Le schéma doit être fourni uniquement pour éviter les accès à l'URL du schéma.",
+	"json.format.enable.desc": "Activer/désactiver le formateur JSON par défaut (nécessite un redémarrage)",
+	"json.tracing.desc": "Trace la communication entre VS Code et le serveur de langage JSON.",
+	"json.colorDecorators.enable.desc": "Active ou désactive les éléments décoratifs de couleurs"
 }

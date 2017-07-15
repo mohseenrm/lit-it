@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var Path = require("path");
 var FS = require("fs");
 var CP = require("child_process");
@@ -109,6 +110,7 @@ function realPath(path) {
         }
     }
     catch (error) {
+        // silently ignore error
     }
     return null;
 }
@@ -124,38 +126,67 @@ function mkdirs(path) {
 }
 exports.mkdirs = mkdirs;
 /*
- * Is the given runtime executable on the PATH.
+ * Lookup the given program on the PATH and return its absolute path on success and undefined otherwise.
  */
-function isOnPath(program) {
-    if (process.platform === 'win32') {
-        var WHERE = 'C:\\Windows\\System32\\where.exe';
-        try {
-            if (FS.existsSync(WHERE)) {
-                CP.execSync(WHERE + " " + program);
+function findOnPath(program) {
+    var locator = process.platform === 'win32' ? 'C:\\Windows\\System32\\where.exe' : '/usr/bin/which';
+    try {
+        if (FS.existsSync(locator)) {
+            var lines = CP.execSync(locator + " " + program).toString().split(/\r?\n/);
+            if (process.platform === 'win32') {
+                // return the first path that has a executable extension
+                var executableExtensions = process.env['PATHEXT'].toUpperCase();
+                for (var _i = 0, lines_1 = lines; _i < lines_1.length; _i++) {
+                    var path = lines_1[_i];
+                    var ext = Path.extname(path).toUpperCase();
+                    if (ext && executableExtensions.indexOf(ext + ';') > 0) {
+                        return path;
+                    }
+                }
             }
             else {
+                // return the first path
+                if (lines.length > 0) {
+                    return lines[0];
+                }
             }
-            return true;
+            return undefined;
         }
-        catch (Exception) {
+        else {
+            // do not report failure if 'locator' app doesn't exist
         }
+        return program;
     }
-    else {
-        var WHICH = '/usr/bin/which';
-        try {
-            if (FS.existsSync(WHICH)) {
-                CP.execSync(WHICH + " '" + program + "'");
-            }
-            else {
-            }
-            return true;
-        }
-        catch (Exception) {
-        }
+    catch (err) {
+        // fall through
     }
-    return false;
+    // fail
+    return undefined;
 }
-exports.isOnPath = isOnPath;
+exports.findOnPath = findOnPath;
+/*
+ *
+ */
+function findExecutable(program) {
+    if (process.platform === 'win32' && !Path.extname(program)) {
+        var PATHEXT = process.env['PATHEXT'];
+        if (PATHEXT) {
+            var executableExtensions = PATHEXT.split(';');
+            for (var _i = 0, executableExtensions_1 = executableExtensions; _i < executableExtensions_1.length; _i++) {
+                var extension = executableExtensions_1[_i];
+                var path = program + extension;
+                if (FS.existsSync(path)) {
+                    return path;
+                }
+            }
+        }
+    }
+    if (FS.existsSync(program)) {
+        return program;
+    }
+    return undefined;
+}
+exports.findExecutable = findExecutable;
 //---- the following functions work with Windows and Unix-style paths independent from the underlying OS.
 /**
  * Returns true if the Windows or Unix-style path is absolute.
@@ -290,7 +321,6 @@ function multiGlob(patterns, opts) {
     });
 }
 exports.multiGlob = multiGlob;
-;
 function multiGlobMatches(patterns, path) {
     var matched = false;
     for (var _i = 0, patterns_1 = patterns; _i < patterns_1.length; _i++) {
@@ -317,5 +347,12 @@ function extendObject(toObject, fromObject) {
     return toObject;
 }
 exports.extendObject = extendObject;
+function stripBOM(s) {
+    if (s && s[0] === '\uFEFF') {
+        s = s.substr(1);
+    }
+    return s;
+}
+exports.stripBOM = stripBOM;
 
 //# sourceMappingURL=../../out/node/pathUtilities.js.map

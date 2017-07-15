@@ -3,11 +3,17 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 'use strict';
-var vscode = require('vscode');
-var ts = require('typescript');
+Object.defineProperty(exports, "__esModule", { value: true });
+var vscode = require("vscode");
+var ts = require("typescript");
+var packageDocumentHelper_1 = require("./packageDocumentHelper");
+var extensionLinter_1 = require("./extensionLinter");
 function activate(context) {
     var registration = vscode.languages.registerDocumentLinkProvider({ language: 'typescript', pattern: '**/vscode.d.ts' }, _linkProvider);
     context.subscriptions.push(registration);
+    //package.json suggestions
+    context.subscriptions.push(registerPackageDocumentCompletions());
+    context.subscriptions.push(new extensionLinter_1.ExtensionLinter(context));
 }
 exports.activate = activate;
 var _linkProvider = new (function () {
@@ -80,5 +86,12 @@ var ast;
         };
     }
     ast.createNamedNodeLookUp = createNamedNodeLookUp;
-})(ast || (ast = {}));
-//# sourceMappingURL=https://ticino.blob.core.windows.net/sourcemaps/ee428b0eead68bf0fb99ab5fdc4439be227b6281/extensions/extension-editing/out/extension.js.map
+})(ast || (ast = {}));
+function registerPackageDocumentCompletions() {
+    return vscode.languages.registerCompletionItemProvider({ language: 'json', pattern: '**/package.json' }, {
+        provideCompletionItems: function (document, position, token) {
+            return new packageDocumentHelper_1.PackageDocument(document).provideCompletionItems(position, token);
+        }
+    });
+}
+//# sourceMappingURL=https://ticino.blob.core.windows.net/sourcemaps/2648980a697a4c8fb5777dcfb2ab110cec8a2f58/extensions/extension-editing/out/extension.js.map

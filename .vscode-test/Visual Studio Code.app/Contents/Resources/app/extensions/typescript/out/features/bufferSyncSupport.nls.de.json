@@ -1,5 +1,5 @@
 [
-	"Versionskonflikt zwischen dem globalen TSC ({0}) und dem Sprachdienst von VS Code ({1}). Dies kann zu Kompilierungsfehlern aufgrund von Inkonsistenzen führen.",
+	"TypeScript ({1}) wird für Editor-Funktionen verwenden. TypeScript ({0}) ist global auf Ihrem Computer installiert. Fehler in VS Code können sich von TSC-Fehlern unterscheiden",
 	"Weitere Informationen",
 	"Nicht erneut überprüfen",
 	"Schließen",

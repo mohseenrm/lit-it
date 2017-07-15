@@ -1,3 +1,4 @@
+"use strict";
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
@@ -41,7 +42,7 @@ log('ELECTRON_RUN_AS_NODE: ' + process.env['ELECTRON_RUN_AS_NODE']);
     stdErrStream.unref();
     // handle process.stderr
     process.__defineGetter__('stderr', function () { return stdErrStream; });
-    var fsWriteSyncString = function (fd, str, position, encoding) {
+    var fsWriteSyncString = function (fd, str, _position, encoding) {
         //  fs.writeSync(fd, string[, position[, encoding]]);
         var buf = new Buffer(str, encoding || 'utf8');
         return fsWriteSyncBuffer(fd, buf, 0, buf.length);
@@ -78,7 +79,7 @@ log('ELECTRON_RUN_AS_NODE: ' + process.env['ELECTRON_RUN_AS_NODE']);
     };
     // handle fs.writeSync(1, ...)
     var originalWriteSync = fs.writeSync;
-    fs.writeSync = function (fd, data, position, encoding) {
+    fs.writeSync = function (fd, data, _position, _encoding) {
         if (fd !== 1 && fd !== 2) {
             return originalWriteSync.apply(fs, arguments);
         }
@@ -158,4 +159,4 @@ log('ELECTRON_RUN_AS_NODE: ' + process.env['ELECTRON_RUN_AS_NODE']);
         process.stdout.write('ready');
     });
 })();
-//# sourceMappingURL=https://ticino.blob.core.windows.net/sourcemaps/ee428b0eead68bf0fb99ab5fdc4439be227b6281/extensions/typescript/out/utils/electronForkStart.js.map
+//# sourceMappingURL=https://ticino.blob.core.windows.net/sourcemaps/2648980a697a4c8fb5777dcfb2ab110cec8a2f58/extensions/typescript/out/utils/electronForkStart.js.map

@@ -3,24 +3,33 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 'use strict';
-var languageModelCache_1 = require('../languageModelCache');
-var vscode_languageserver_types_1 = require('vscode-languageserver-types');
-var strings_1 = require('../utils/strings');
-var ts = require('typescript');
-var path_1 = require('path');
+Object.defineProperty(exports, "__esModule", { value: true });
+var languageModelCache_1 = require("../languageModelCache");
+var vscode_languageserver_types_1 = require("vscode-languageserver-types");
+var strings_1 = require("../utils/strings");
+var ts = require("typescript");
+var path_1 = require("path");
 var FILE_NAME = 'vscode://javascript/1'; // the same 'file' is used for all contents
 var JQUERY_D_TS = path_1.join(__dirname, '../../lib/jquery.d.ts');
 var JS_WORD_REGEX = /(-?\d*\.\d\w*)|([^\`\~\!\@\#\%\^\&\*\(\)\-\=\+\[\{\]\}\\\|\;\:\'\"\,\.\<\>\/\?\s]+)/g;
 function getJavascriptMode(documentRegions) {
     var jsDocuments = languageModelCache_1.getLanguageModelCache(10, 60, function (document) { return documentRegions.get(document).getEmbeddedDocument('javascript'); });
-    var compilerOptions = { allowNonTsExtensions: true, allowJs: true, target: ts.ScriptTarget.Latest, moduleResolution: ts.ModuleResolutionKind.Classic };
+    var compilerOptions = { allowNonTsExtensions: true, allowJs: true, lib: ['lib.es6.d.ts'], target: ts.ScriptTarget.Latest, moduleResolution: ts.ModuleResolutionKind.Classic };
     var currentTextDocument;
+    var scriptFileVersion = 0;
+    function updateCurrentTextDocument(doc) {
+        if (!currentTextDocument || doc.uri !== currentTextDocument.uri || doc.version !== currentTextDocument.version) {
+            currentTextDocument = jsDocuments.get(doc);
+            scriptFileVersion++;
+        }
+    }
     var host = {
         getCompilationSettings: function () { return compilerOptions; },
         getScriptFileNames: function () { return [FILE_NAME, JQUERY_D_TS]; },
+        getScriptKind: function () { return ts.ScriptKind.JS; },
         getScriptVersion: function (fileName) {
             if (fileName === FILE_NAME) {
-                return String(currentTextDocument.version);
+                return String(scriptFileVersion);
             }
             return '1'; // default lib an jquery.d.ts are static
         },
@@ -53,18 +62,19 @@ function getJavascriptMode(documentRegions) {
             settings = options && options.javascript;
         },
         doValidation: function (document) {
-            currentTextDocument = jsDocuments.get(document);
-            var diagnostics = jsLanguageService.getSyntacticDiagnostics(FILE_NAME);
-            return diagnostics.map(function (diag) {
+            updateCurrentTextDocument(document);
+            var syntaxDiagnostics = jsLanguageService.getSyntacticDiagnostics(FILE_NAME);
+            var semanticDiagnostics = jsLanguageService.getSemanticDiagnostics(FILE_NAME);
+            return syntaxDiagnostics.concat(semanticDiagnostics).map(function (diag) {
                 return {
                     range: convertRange(currentTextDocument, diag),
-                    severity: 1 /* Error */,
+                    severity: vscode_languageserver_types_1.DiagnosticSeverity.Error,
                     message: ts.flattenDiagnosticMessageText(diag.messageText, '\n')
                 };
             });
         },
         doComplete: function (document, position) {
-            currentTextDocument = jsDocuments.get(document);
+            updateCurrentTextDocument(document);
             var offset = currentTextDocument.offsetAt(position);
             var completions = jsLanguageService.getCompletionsAtPosition(FILE_NAME, offset);
             if (!completions) {
@@ -91,7 +101,7 @@ function getJavascriptMode(documentRegions) {
             };
         },
         doResolve: function (document, item) {
-            currentTextDocument = jsDocuments.get(document);
+            updateCurrentTextDocument(document);
             var details = jsLanguageService.getCompletionEntryDetails(FILE_NAME, item.data.offset, item.label);
             if (details) {
                 item.detail = ts.displayPartsToString(details.displayParts);
@@ -101,7 +111,7 @@ function getJavascriptMode(documentRegions) {
             return item;
         },
         doHover: function (document, position) {
-            currentTextDocument = jsDocuments.get(document);
+            updateCurrentTextDocument(document);
             var info = jsLanguageService.getQuickInfoAtPosition(FILE_NAME, currentTextDocument.offsetAt(position));
             if (info) {
                 var contents = ts.displayPartsToString(info.displayParts);
@@ -113,7 +123,7 @@ function getJavascriptMode(documentRegions) {
             return null;
         },
         doSignatureHelp: function (document, position) {
-            currentTextDocument = jsDocuments.get(document);
+            updateCurrentTextDocument(document);
             var signHelp = jsLanguageService.getSignatureHelpItems(FILE_NAME, currentTextDocument.offsetAt(position));
             if (signHelp) {
                 var ret_1 = {
@@ -149,13 +159,13 @@ function getJavascriptMode(documentRegions) {
             return null;
         },
         findDocumentHighlight: function (document, position) {
-            currentTextDocument = jsDocuments.get(document);
+            updateCurrentTextDocument(document);
             var occurrences = jsLanguageService.getOccurrencesAtPosition(FILE_NAME, currentTextDocument.offsetAt(position));
             if (occurrences) {
                 return occurrences.map(function (entry) {
                     return {
                         range: convertRange(currentTextDocument, entry.textSpan),
-                        kind: entry.isWriteAccess ? 3 /* Write */ : 1 /* Text */
+                        kind: (entry.isWriteAccess ? vscode_languageserver_types_1.DocumentHighlightKind.Write : vscode_languageserver_types_1.DocumentHighlightKind.Text)
                     };
                 });
             }
@@ -163,7 +173,7 @@ function getJavascriptMode(documentRegions) {
             return null;
         },
         findDocumentSymbols: function (document) {
-            currentTextDocument = jsDocuments.get(document);
+            updateCurrentTextDocument(document);
             var items = jsLanguageService.getNavigationBarItems(FILE_NAME);
             if (items) {
                 var result_1 = [];
@@ -197,7 +207,7 @@ function getJavascriptMode(documentRegions) {
             return null;
         },
         findDefinition: function (document, position) {
-            currentTextDocument = jsDocuments.get(document);
+            updateCurrentTextDocument(document);
             var definition = jsLanguageService.getDefinitionAtPosition(FILE_NAME, currentTextDocument.offsetAt(position));
             if (definition) {
                 return definition.filter(function (d) { return d.fileName === FILE_NAME; }).map(function (d) {
@@ -210,7 +220,7 @@ function getJavascriptMode(documentRegions) {
             return null;
         },
         findReferences: function (document, position) {
-            currentTextDocument = jsDocuments.get(document);
+            updateCurrentTextDocument(document);
             var references = jsLanguageService.getReferencesAtPosition(FILE_NAME, currentTextDocument.offsetAt(position));
             if (references) {
                 return references.filter(function (d) { return d.fileName === FILE_NAME; }).map(function (d) {
@@ -223,7 +233,8 @@ function getJavascriptMode(documentRegions) {
             return null;
         },
         format: function (document, range, formatParams) {
-            currentTextDocument = jsDocuments.get(document);
+            currentTextDocument = documentRegions.get(document).getEmbeddedDocument('javascript', true);
+            scriptFileVersion++;
             var initialIndentLevel = computeInitialIndent(document, range, formatParams);
             var formatSettings = convertOptions(formatParams, settings && settings.format, initialIndentLevel + 1);
             var start = currentTextDocument.offsetAt(range.start);
@@ -275,58 +286,58 @@ function convertKind(kind) {
     switch (kind) {
         case 'primitive type':
         case 'keyword':
-            return 14 /* Keyword */;
+            return vscode_languageserver_types_1.CompletionItemKind.Keyword;
         case 'var':
         case 'local var':
-            return 6 /* Variable */;
+            return vscode_languageserver_types_1.CompletionItemKind.Variable;
         case 'property':
         case 'getter':
         case 'setter':
-            return 5 /* Field */;
+            return vscode_languageserver_types_1.CompletionItemKind.Field;
         case 'function':
         case 'method':
         case 'construct':
         case 'call':
         case 'index':
-            return 3 /* Function */;
+            return vscode_languageserver_types_1.CompletionItemKind.Function;
         case 'enum':
-            return 13 /* Enum */;
+            return vscode_languageserver_types_1.CompletionItemKind.Enum;
         case 'module':
-            return 9 /* Module */;
+            return vscode_languageserver_types_1.CompletionItemKind.Module;
         case 'class':
-            return 7 /* Class */;
+            return vscode_languageserver_types_1.CompletionItemKind.Class;
         case 'interface':
-            return 8 /* Interface */;
+            return vscode_languageserver_types_1.CompletionItemKind.Interface;
         case 'warning':
-            return 17 /* File */;
+            return vscode_languageserver_types_1.CompletionItemKind.File;
     }
-    return 10 /* Property */;
+    return vscode_languageserver_types_1.CompletionItemKind.Property;
 }
 function convertSymbolKind(kind) {
     switch (kind) {
         case 'var':
         case 'local var':
         case 'const':
-            return 13 /* Variable */;
+            return vscode_languageserver_types_1.SymbolKind.Variable;
         case 'function':
         case 'local function':
-            return 12 /* Function */;
+            return vscode_languageserver_types_1.SymbolKind.Function;
         case 'enum':
-            return 10 /* Enum */;
+            return vscode_languageserver_types_1.SymbolKind.Enum;
         case 'module':
-            return 2 /* Module */;
+            return vscode_languageserver_types_1.SymbolKind.Module;
         case 'class':
-            return 5 /* Class */;
+            return vscode_languageserver_types_1.SymbolKind.Class;
         case 'interface':
-            return 11 /* Interface */;
+            return vscode_languageserver_types_1.SymbolKind.Interface;
         case 'method':
-            return 6 /* Method */;
+            return vscode_languageserver_types_1.SymbolKind.Method;
         case 'property':
         case 'getter':
         case 'setter':
-            return 7 /* Property */;
+            return vscode_languageserver_types_1.SymbolKind.Property;
     }
-    return 13 /* Variable */;
+    return vscode_languageserver_types_1.SymbolKind.Variable;
 }
 function convertOptions(options, formatSettings, initialIndentLevel) {
     return {
@@ -343,6 +354,7 @@ function convertOptions(options, formatSettings, initialIndentLevel) {
         InsertSpaceAfterFunctionKeywordForAnonymousFunctions: Boolean(!formatSettings || formatSettings.insertSpaceAfterFunctionKeywordForAnonymousFunctions),
         InsertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis: Boolean(formatSettings && formatSettings.insertSpaceAfterOpeningAndBeforeClosingNonemptyParenthesis),
         InsertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets: Boolean(formatSettings && formatSettings.insertSpaceAfterOpeningAndBeforeClosingNonemptyBrackets),
+        InsertSpaceAfterOpeningAndBeforeClosingNonemptyBraces: Boolean(formatSettings && formatSettings.insertSpaceAfterOpeningAndBeforeClosingNonemptyBraces),
         InsertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces: Boolean(formatSettings && formatSettings.insertSpaceAfterOpeningAndBeforeClosingTemplateStringBraces),
         PlaceOpenBraceOnNewLineForControlBlocks: Boolean(formatSettings && formatSettings.placeOpenBraceOnNewLineForFunctions),
         PlaceOpenBraceOnNewLineForFunctions: Boolean(formatSettings && formatSettings.placeOpenBraceOnNewLineForControlBlocks)
@@ -377,4 +389,4 @@ function generateIndent(level, options) {
         return strings_1.repeat('\t', level);
     }
 }
-//# sourceMappingURL=https://ticino.blob.core.windows.net/sourcemaps/ee428b0eead68bf0fb99ab5fdc4439be227b6281/extensions/html/server/out/modes/javascriptMode.js.map
+//# sourceMappingURL=https://ticino.blob.core.windows.net/sourcemaps/2648980a697a4c8fb5777dcfb2ab110cec8a2f58/extensions/html/server/out/modes/javascriptMode.js.map

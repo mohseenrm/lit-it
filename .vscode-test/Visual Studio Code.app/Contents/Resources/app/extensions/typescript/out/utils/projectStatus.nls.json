@@ -1,16 +1,16 @@
 {
 	"messages": [
-		"To enable JavaScript/TypeScript IntelliSense, exclude folders with many files, like: {0}",
-		"To enable JavaScript/TypeScript IntelliSense, exclude large folders with source files that you do not work on.",
+		"To enable project-wide JavaScript/TypeScript language features, exclude folders with many files, like: {0}",
+		"To enable project-wide JavaScript/TypeScript language features, exclude large folders with source files that you do not work on.",
 		"Configure Excludes",
-		"Configure Excludes",
-		"To enable JavaScript/TypeScript IntelliSense, exclude large folders with source files that you do not work on."
+		"To enable project-wide JavaScript/TypeScript language features, exclude large folders with source files that you do not work on.",
+		"Configure Excludes"
 	],
 	"keys": [
 		"hintExclude",
 		"hintExclude.generic",
-		"open",
 		"large.label",
-		"hintExclude.tooltip"
+		"hintExclude.tooltip",
+		"large.label"
 	]
 }

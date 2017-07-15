@@ -1,8 +1,8 @@
-# VS Code Node Debug 2 (Experimental)
+# VS Code Node Debug 2
 [![build status](https://travis-ci.org/Microsoft/vscode-node-debug2.svg?branch=master)](https://travis-ci.org/Microsoft/vscode-node-debug2)
 [![Build status](https://ci.appveyor.com/api/projects/status/qrr2hff3eagw5k05?svg=true)](https://ci.appveyor.com/project/roblourens/vscode-node-debug2)
 
-This repository contains an experimental debug extension for [node.js](https://nodejs.org) that ships with [VS Code](https://code.visualstudio.com) and uses the [Chrome Debugging Protocol](https://chromedevtools.github.io/debugger-protocol-viewer/v8/), which Node now exposes via the `--inspect` flag, only in Node versions 6.3+. It's built on the [vscode-chrome-debug-core](https://github.com/Microsoft/vscode-chrome-debug-core) library.
+This repository contains a debug extension for [node.js](https://nodejs.org) that ships with [VS Code](https://code.visualstudio.com) and uses the [Chrome Debugging Protocol](https://chromedevtools.github.io/debugger-protocol-viewer/v8/), which Node now exposes via the `--inspect` flag, only in Node versions 6.3+. It's built on the [vscode-chrome-debug-core](https://github.com/Microsoft/vscode-chrome-debug-core) library.
 
 This extension has essentially reached feature-parity with vscode-node-debug. You can see the remaining issues in the [vscode-node-debug2](https://github.com/Microsoft/vscode-node-debug2/issues) repo and the [vscode-chrome-debug-core](https://github.com/microsoft/vscode-chrome-debug-core/issues) repo. You should be able to set `"type": "node2"` in your existing Node launch config and have things work the same, as long as it's running in Node v6.3+.
 
@@ -52,10 +52,14 @@ The `sourceMapPathOverrides` option lets you set a mapping of source paths from 
 If you set `sourceMapPathOverrides` in your launch config, that will override these defaults. `${workspaceRoot}` and `${cwd}` can be used here. If you aren't sure what the left side should be, you can use the `.scripts` command (details below). You can also use the `diagnosticLogging`/`verboseDiagnosticLogging` options to see the contents of the sourcemap, or look at the paths of the sources in Chrome DevTools, or open your `.js.map` file and check the values manually.
 
 ## Skipping "library code"/"blackboxed scripts"
-The `experimentalLibraryCode` option allows you to specify an array of names of folders/files to skip when debugging. For example, if you set `"experimentalLibraryCode": ["lib.js"]`, then you will skip any file named 'lib.js' when stepping through your code. You also won't break on exceptions thrown from 'lib.js'. This works the same as "blackboxing scripts" in Chrome DevTools. Note that this is just an experiment at the moment. The format for entries is also the same, so you can add
+The `skipFiles` option allows you to specify an array of names of folders/files to skip when debugging. For example, if you set `"skipFiles": ["lib.js"]`, then you will skip any file named 'lib.js' when stepping through your code. You also won't break on exceptions thrown from 'lib.js'. This works the same as "blackboxing scripts" in Chrome DevTools. Note that this is just an experiment at the moment. The supported formats are:
   * The name of a file (like `lib.js`)
   * The name of a folder, under which to skip all scripts (like `node_modules`)
-  * A regex, to skip all scripts that match (like `\.min\.js$`)
+  * A path glob, to skip all scripts that match (like `node_modules/**/*.min.js`)
+
+You can also skip a file at runtime by right clicking on the stack frame and selecting "Toggle skipping this file". This option only persists for the current debugging session. You can also use it to stop skipping a file that is skipped by the `skipFiles` option in your launch config.
+
+When a file is skipped, it will be grayed out in the callstack.
 
 ## Contributing
 Contributions are welcome, please see [CONTRIBUTING.txt](https://github.com/Microsoft/vscode-node-debug2/blob/master/CONTRIBUTING.txt).

@@ -3,7 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 'use strict';
-var vscode_html_languageservice_1 = require('vscode-html-languageservice');
+Object.defineProperty(exports, "__esModule", { value: true });
+var vscode_html_languageservice_1 = require("vscode-html-languageservice");
 exports.CSS_STYLE_RULE = '__';
 ;
 function getDocumentRegions(languageService, document) {
@@ -66,7 +67,7 @@ function getDocumentRegions(languageService, document) {
     }
     return {
         getLanguageRanges: function (range) { return getLanguageRanges(document, regions, range); },
-        getEmbeddedDocument: function (languageId) { return getEmbeddedDocument(document, regions, languageId); },
+        getEmbeddedDocument: function (languageId, ignoreAttributeValues) { return getEmbeddedDocument(document, regions, languageId, ignoreAttributeValues); },
         getLanguageAtPosition: function (position) { return getLanguageAtPosition(document, regions, position); },
         getLanguagesInDocument: function () { return getLanguagesInDocument(document, regions); },
         getImportedScripts: function () { return importedScripts; }
@@ -143,14 +144,14 @@ function getLanguageAtPosition(document, regions, position) {
     }
     return 'html';
 }
-function getEmbeddedDocument(document, contents, languageId) {
+function getEmbeddedDocument(document, contents, languageId, ignoreAttributeValues) {
     var currentPos = 0;
     var oldContent = document.getText();
     var result = '';
     var lastSuffix = '';
     for (var _i = 0, contents_1 = contents; _i < contents_1.length; _i++) {
         var c = contents_1[_i];
-        if (c.languageId === languageId) {
+        if (c.languageId === languageId && (!ignoreAttributeValues || !c.attributeValue)) {
             result = substituteWithWhitespace(result, currentPos, c.start, oldContent, lastSuffix, getPrefix(c));
             result += oldContent.substring(c.start, c.end);
             currentPos = c.end;
@@ -212,4 +213,4 @@ function getAttributeLanguage(attributeName) {
     }
     return match[1] ? 'css' : 'javascript';
 }
-//# sourceMappingURL=https://ticino.blob.core.windows.net/sourcemaps/ee428b0eead68bf0fb99ab5fdc4439be227b6281/extensions/html/server/out/modes/embeddedSupport.js.map
+//# sourceMappingURL=https://ticino.blob.core.windows.net/sourcemaps/2648980a697a4c8fb5777dcfb2ab110cec8a2f58/extensions/html/server/out/modes/embeddedSupport.js.map

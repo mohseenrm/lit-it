@@ -3,15 +3,16 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 'use strict';
-var path = require('path');
-var vscode_1 = require('vscode');
-var vscode_languageclient_1 = require('vscode-languageclient');
-var colorDecorators_1 = require('./colorDecorators');
-var nls = require('vscode-nls');
+Object.defineProperty(exports, "__esModule", { value: true });
+var path = require("path");
+var vscode_1 = require("vscode");
+var vscode_languageclient_1 = require("vscode-languageclient");
+var colorDecorators_1 = require("./colorDecorators");
+var nls = require("vscode-nls");
 var localize = nls.loadMessageBundle(__filename);
 var ColorSymbolRequest;
 (function (ColorSymbolRequest) {
-    ColorSymbolRequest.type = { get method() { return 'css/colorSymbols'; }, _: null };
+    ColorSymbolRequest.type = new vscode_languageclient_1.RequestType('css/colorSymbols');
 })(ColorSymbolRequest || (ColorSymbolRequest = {}));
 // this method is called when vs code is activated
 function activate(context) {
@@ -39,19 +40,31 @@ function activate(context) {
     // Push the disposable to the context's subscriptions so that the
     // client can be deactivated on extension deactivation
     context.subscriptions.push(disposable);
-    var colorRequestor = function (uri) {
-        return client.sendRequest(ColorSymbolRequest.type, uri).then(function (ranges) { return ranges.map(client.protocol2CodeConverter.asRange); });
+    client.onReady().then(function (_) {
+        var colorRequestor = function (uri) {
+            return client.sendRequest(ColorSymbolRequest.type, uri).then(function (ranges) { return ranges.map(client.protocol2CodeConverter.asRange); });
+        };
+        var isDecoratorEnabled = function (languageId) {
+            return vscode_1.workspace.getConfiguration().get(languageId + '.colorDecorators.enable');
+        };
+        disposable = colorDecorators_1.activateColorDecorations(colorRequestor, { css: true, scss: true, less: true }, isDecoratorEnabled);
+        context.subscriptions.push(disposable);
+    });
+    var indentationRules = {
+        increaseIndentPattern: /(^.*\{[^}]*$)/,
+        decreaseIndentPattern: /^\s*\}/
     };
-    disposable = colorDecorators_1.activateColorDecorations(colorRequestor, { css: true, scss: true, less: true });
-    context.subscriptions.push(disposable);
     vscode_1.languages.setLanguageConfiguration('css', {
-        wordPattern: /(#?-?\d*\.\d\w*%?)|(::?[\w-]*(?=[^,{;]*[,{]))|(([@#.!])?[\w-?]+%?|[@#!.])/g
+        wordPattern: /(#?-?\d*\.\d\w*%?)|(::?[\w-]*(?=[^,{;]*[,{]))|(([@#.!])?[\w-?]+%?|[@#!.])/g,
+        indentationRules: indentationRules
     });
     vscode_1.languages.setLanguageConfiguration('less', {
-        wordPattern: /(#?-?\d*\.\d\w*%?)|(::?[\w-]+(?=[^,{;]*[,{]))|(([@#.!])?[\w-?]+%?|[@#!.])/g
+        wordPattern: /(#?-?\d*\.\d\w*%?)|(::?[\w-]+(?=[^,{;]*[,{]))|(([@#.!])?[\w-?]+%?|[@#!.])/g,
+        indentationRules: indentationRules
     });
     vscode_1.languages.setLanguageConfiguration('scss', {
-        wordPattern: /(#?-?\d*\.\d\w*%?)|(::?[\w-]*(?=[^,{;]*[,{]))|(([@$#.!])?[\w-?]+%?|[@#!$.])/g
+        wordPattern: /(#?-?\d*\.\d\w*%?)|(::?[\w-]*(?=[^,{;]*[,{]))|(([@$#.!])?[\w-?]+%?|[@#!$.])/g,
+        indentationRules: indentationRules
     });
     vscode_1.commands.registerCommand('_css.applyCodeAction', applyCodeAction);
     function applyCodeAction(uri, documentVersion, edits) {
@@ -74,4 +87,4 @@ function activate(context) {
     }
 }
 exports.activate = activate;
-//# sourceMappingURL=https://ticino.blob.core.windows.net/sourcemaps/ee428b0eead68bf0fb99ab5fdc4439be227b6281/extensions/css/client/out/cssMain.js.map
+//# sourceMappingURL=https://ticino.blob.core.windows.net/sourcemaps/2648980a697a4c8fb5777dcfb2ab110cec8a2f58/extensions/css/client/out/cssMain.js.map

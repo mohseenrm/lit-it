@@ -3,28 +3,30 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 'use strict';
-var vscode_languageserver_1 = require('vscode-languageserver');
-var request_light_1 = require('request-light');
-var path = require('path');
-var fs = require('fs');
-var uri_1 = require('./utils/uri');
-var URL = require('url');
-var Strings = require('./utils/strings');
-var vscode_json_languageservice_1 = require('vscode-json-languageservice');
-var projectJSONContribution_1 = require('./jsoncontributions/projectJSONContribution');
-var globPatternContribution_1 = require('./jsoncontributions/globPatternContribution');
-var fileAssociationContribution_1 = require('./jsoncontributions/fileAssociationContribution');
-var languageModelCache_1 = require('./languageModelCache');
-var nls = require('vscode-nls');
+Object.defineProperty(exports, "__esModule", { value: true });
+var vscode_languageserver_1 = require("vscode-languageserver");
+var request_light_1 = require("request-light");
+var path = require("path");
+var fs = require("fs");
+var uri_1 = require("./utils/uri");
+var URL = require("url");
+var Strings = require("./utils/strings");
+var vscode_json_languageservice_1 = require("vscode-json-languageservice");
+var languageModelCache_1 = require("./languageModelCache");
+var nls = require("vscode-nls");
 nls.config(process.env['VSCODE_NLS_CONFIG']);
 var SchemaAssociationNotification;
 (function (SchemaAssociationNotification) {
-    SchemaAssociationNotification.type = { get method() { return 'json/schemaAssociations'; }, _: null };
+    SchemaAssociationNotification.type = new vscode_languageserver_1.NotificationType('json/schemaAssociations');
 })(SchemaAssociationNotification || (SchemaAssociationNotification = {}));
 var VSCodeContentRequest;
 (function (VSCodeContentRequest) {
-    VSCodeContentRequest.type = { get method() { return 'vscode/content'; }, _: null };
+    VSCodeContentRequest.type = new vscode_languageserver_1.RequestType('vscode/content');
 })(VSCodeContentRequest || (VSCodeContentRequest = {}));
+var ColorSymbolRequest;
+(function (ColorSymbolRequest) {
+    ColorSymbolRequest.type = new vscode_languageserver_1.RequestType('json/colorSymbols');
+})(ColorSymbolRequest || (ColorSymbolRequest = {}));
 // Create a connection for the server
 var connection = vscode_languageserver_1.createConnection();
 console.log = connection.console.log.bind(connection.console);
@@ -35,23 +37,34 @@ var documents = new vscode_languageserver_1.TextDocuments();
 // Make the text document manager listen on the connection
 // for open, change and close text document events
 documents.listen(connection);
-var filesAssociationContribution = new fileAssociationContribution_1.FileAssociationContribution();
+var clientSnippetSupport = false;
+var clientDynamicRegisterSupport = false;
 // After the server has started the client sends an initilize request. The server receives
 // in the passed params the rootPath of the workspace plus the client capabilities.
 var workspaceRoot;
 connection.onInitialize(function (params) {
     workspaceRoot = uri_1.default.parse(params.rootPath);
-    if (params.initializationOptions) {
-        filesAssociationContribution.setLanguageIds(params.initializationOptions.languageIds);
+    function hasClientCapability() {
+        var keys = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            keys[_i] = arguments[_i];
+        }
+        var c = params.capabilities;
+        for (var i = 0; c && i < keys.length; i++) {
+            c = c[keys[i]];
+        }
+        return !!c;
     }
+    clientSnippetSupport = hasClientCapability('textDocument', 'completion', 'completionItem', 'snippetSupport');
+    clientDynamicRegisterSupport = hasClientCapability('workspace', 'symbol', 'dynamicRegistration');
     return {
         capabilities: {
             // Tell the client that the server works in FULL text document sync mode
             textDocumentSync: documents.syncKind,
-            completionProvider: { resolveProvider: true, triggerCharacters: ['"', ':'] },
+            completionProvider: clientSnippetSupport ? { resolveProvider: true, triggerCharacters: ['"', ':'] } : null,
             hoverProvider: true,
             documentSymbolProvider: true,
-            documentRangeFormattingProvider: !params.initializationOptions || params.initializationOptions['format.enable']
+            documentRangeFormattingProvider: false
         }
     };
 });
@@ -84,7 +97,8 @@ var schemaRequestService = function (uri) {
             }
         });
     }
-    return request_light_1.xhr({ url: uri, followRedirects: 5 }).then(function (response) {
+    var headers = { 'Accept-Encoding': 'gzip, deflate' };
+    return request_light_1.xhr({ url: uri, followRedirects: 5, headers: headers }).then(function (response) {
         return response.responseText;
     }, function (error) {
         return Promise.reject(error.responseText || request_light_1.getErrorStatusDescription(error.status) || error.toString());
@@ -94,20 +108,32 @@ var schemaRequestService = function (uri) {
 var languageService = vscode_json_languageservice_1.getLanguageService({
     schemaRequestService: schemaRequestService,
     workspaceContext: workspaceContext,
-    contributions: [
-        new projectJSONContribution_1.ProjectJSONContribution(),
-        new globPatternContribution_1.GlobPatternContribution(),
-        filesAssociationContribution
-    ]
+    contributions: []
 });
 var jsonConfigurationSettings = void 0;
 var schemaAssociations = void 0;
+var formatterRegistration = null;
 // The settings have changed. Is send on server activation as well.
 connection.onDidChangeConfiguration(function (change) {
     var settings = change.settings;
     request_light_1.configure(settings.http && settings.http.proxy, settings.http && settings.http.proxyStrictSSL);
     jsonConfigurationSettings = settings.json && settings.json.schemas;
     updateConfiguration();
+    // dynamically enable & disable the formatter
+    if (clientDynamicRegisterSupport) {
+        var enableFormatter = settings && settings.json && settings.json.format && settings.json.format.enable;
+        if (enableFormatter) {
+            if (!formatterRegistration) {
+                console.log('enable');
+                formatterRegistration = connection.client.register(vscode_languageserver_1.DocumentRangeFormattingRequest.type, { documentSelector: [{ language: 'json' }] });
+            }
+        }
+        else if (formatterRegistration) {
+            console.log('enable');
+            formatterRegistration.then(function (r) { return r.dispose(); });
+            formatterRegistration = null;
+        }
+    }
 });
 // The jsonValidation extension configuration has changed
 connection.onNotification(SchemaAssociationNotification.type, function (associations) {
@@ -203,6 +229,12 @@ connection.onDidChangeWatchedFiles(function (change) {
     }
 });
 var jsonDocuments = languageModelCache_1.getLanguageModelCache(10, 60, function (document) { return languageService.parseJSONDocument(document); });
+documents.onDidClose(function (e) {
+    jsonDocuments.onDocumentRemoved(e.document);
+});
+connection.onShutdown(function () {
+    jsonDocuments.dispose();
+});
 function getJSONDocument(document) {
     return jsonDocuments.get(document);
 }
@@ -228,6 +260,14 @@ connection.onDocumentRangeFormatting(function (formatParams) {
     var document = documents.get(formatParams.textDocument.uri);
     return languageService.format(document, formatParams.range, formatParams.options);
 });
+connection.onRequest(ColorSymbolRequest.type, function (uri) {
+    var document = documents.get(uri);
+    if (document) {
+        var jsonDocument = getJSONDocument(document);
+        return languageService.findColorSymbols(document, jsonDocument);
+    }
+    return [];
+});
 // Listen on the connection
 connection.listen();
-//# sourceMappingURL=https://ticino.blob.core.windows.net/sourcemaps/ee428b0eead68bf0fb99ab5fdc4439be227b6281/extensions/json/server/out/jsonServerMain.js.map
+//# sourceMappingURL=https://ticino.blob.core.windows.net/sourcemaps/2648980a697a4c8fb5777dcfb2ab110cec8a2f58/extensions/json/server/out/jsonServerMain.js.map

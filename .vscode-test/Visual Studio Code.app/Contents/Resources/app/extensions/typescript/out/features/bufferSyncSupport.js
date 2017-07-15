@@ -1,70 +1,68 @@
+"use strict";
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-'use strict';
-var cp = require('child_process');
-var path = require('path');
-var fs = require('fs');
-var vscode_1 = require('vscode');
-var async_1 = require('../utils/async');
-var linkedMap_1 = require('./linkedMap');
-var nls = require('vscode-nls');
-var localize = nls.loadMessageBundle(__filename);
-var Mode2ScriptKind = {
-    'typescript': 'TS',
-    'typescriptreact': 'TSX',
-    'javascript': 'JS',
-    'javascriptreact': 'JSX'
-};
-var SyncedBuffer = (function () {
-    function SyncedBuffer(document, filepath, diagnosticRequestor, client) {
+Object.defineProperty(exports, "__esModule", { value: true });
+const cp = require("child_process");
+const fs = require("fs");
+const vscode_1 = require("vscode");
+const async_1 = require("../utils/async");
+const nls = require("vscode-nls");
+let localize = nls.loadMessageBundle(__filename);
+function mode2ScriptKind(mode) {
+    switch (mode) {
+        case 'typescript': return 'TS';
+        case 'typescriptreact': return 'TSX';
+        case 'javascript': return 'JS';
+        case 'javascriptreact': return 'JSX';
+    }
+    return undefined;
+}
+class SyncedBuffer {
+    constructor(document, filepath, diagnosticRequestor, client) {
         this.document = document;
         this.filepath = filepath;
         this.diagnosticRequestor = diagnosticRequestor;
         this.client = client;
     }
-    SyncedBuffer.prototype.open = function () {
-        var args = {
+    open() {
+        const args = {
             file: this.filepath,
             fileContent: this.document.getText(),
         };
         if (this.client.apiVersion.has203Features()) {
-            // we have no extension. So check the mode and
-            // set the script kind accordningly.
-            var ext = path.extname(this.filepath);
-            if (ext === '') {
-                var scriptKind = Mode2ScriptKind[this.document.languageId];
-                if (scriptKind) {
-                    args.scriptKindName = scriptKind;
-                }
+            const scriptKind = mode2ScriptKind(this.document.languageId);
+            if (scriptKind) {
+                args.scriptKindName = scriptKind;
+            }
+        }
+        if (this.client.apiVersion.has230Features()) {
+            const root = this.client.getWorkspaceRootForResource(this.document.uri);
+            if (root) {
+                args.projectRootPath = root;
             }
         }
         this.client.execute('open', args, false);
-    };
-    Object.defineProperty(SyncedBuffer.prototype, "lineCount", {
-        get: function () {
-            return this.document.lineCount;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    SyncedBuffer.prototype.close = function () {
-        var args = {
+    }
+    get lineCount() {
+        return this.document.lineCount;
+    }
+    close() {
+        const args = {
             file: this.filepath
         };
         this.client.execute('close', args, false);
-    };
-    SyncedBuffer.prototype.onContentChanged = function (events) {
-        var filePath = this.client.asAbsolutePath(this.document.uri);
+    }
+    onContentChanged(events) {
+        const filePath = this.client.normalizePath(this.document.uri);
         if (!filePath) {
             return;
         }
-        for (var i = 0; i < events.length; i++) {
-            var event = events[i];
-            var range = event.range;
-            var text = event.text;
-            var args = {
+        for (const event of events) {
+            const range = event.range;
+            const text = event.text;
+            const args = {
                 file: filePath,
                 line: range.start.line + 1,
                 offset: range.start.character + 1,
@@ -75,196 +73,159 @@ var SyncedBuffer = (function () {
             this.client.execute('change', args, false);
         }
         this.diagnosticRequestor.requestDiagnostic(filePath);
-    };
-    return SyncedBuffer;
-}());
-var checkTscVersionSettingKey = 'check.tscVersion';
-var BufferSyncSupport = (function () {
-    function BufferSyncSupport(client, modeIds, diagnostics, extensions, validate) {
-        var _this = this;
-        if (validate === void 0) { validate = true; }
-        this.disposables = [];
-        this.client = client;
-        this.modeIds = Object.create(null);
-        modeIds.forEach(function (modeId) { return _this.modeIds[modeId] = true; });
-        this.diagnostics = diagnostics;
-        this.extensions = extensions;
-        this._validate = validate;
-        this.projectValidationRequested = false;
-        this.pendingDiagnostics = Object.create(null);
-        this.diagnosticDelayer = new async_1.Delayer(300);
-        this.syncedBuffers = Object.create(null);
-        this.emitQueue = new linkedMap_1.default();
-        var tsConfig = vscode_1.workspace.getConfiguration('typescript');
-        this.checkGlobalTSCVersion = client.checkGlobalTSCVersion && this.modeIds['typescript'] === true && tsConfig.get(checkTscVersionSettingKey, true);
     }
-    BufferSyncSupport.prototype.listen = function () {
+}
+const checkTscVersionSettingKey = 'check.tscVersion';
+class BufferSyncSupport {
+    constructor(client, modeIds, diagnostics, validate = true) {
+        this.disposables = [];
+        this.pendingDiagnostics = new Map();
+        this.client = client;
+        this.modeIds = new Set(modeIds);
+        this.diagnostics = diagnostics;
+        this._validate = validate;
+        this.diagnosticDelayer = new async_1.Delayer(300);
+        this.syncedBuffers = new Map();
+        const tsConfig = vscode_1.workspace.getConfiguration('typescript');
+        this.checkGlobalTSCVersion = client.checkGlobalTSCVersion && this.modeIds.has('typescript') && tsConfig.get(checkTscVersionSettingKey, true);
+    }
+    listen() {
         vscode_1.workspace.onDidOpenTextDocument(this.onDidOpenTextDocument, this, this.disposables);
         vscode_1.workspace.onDidCloseTextDocument(this.onDidCloseTextDocument, this, this.disposables);
         vscode_1.workspace.onDidChangeTextDocument(this.onDidChangeTextDocument, this, this.disposables);
-        vscode_1.workspace.onDidSaveTextDocument(this.onDidSaveTextDocument, this, this.disposables);
         vscode_1.workspace.textDocuments.forEach(this.onDidOpenTextDocument, this);
-    };
-    Object.defineProperty(BufferSyncSupport.prototype, "validate", {
-        get: function () {
-            return this._validate;
-        },
-        set: function (value) {
-            this._validate = value;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    BufferSyncSupport.prototype.handles = function (file) {
-        return !!this.syncedBuffers[file];
-    };
-    BufferSyncSupport.prototype.reOpenDocuments = function () {
-        var _this = this;
-        Object.keys(this.syncedBuffers).forEach(function (key) {
-            _this.syncedBuffers[key].open();
-        });
-    };
-    BufferSyncSupport.prototype.dispose = function () {
+    }
+    get validate() {
+        return this._validate;
+    }
+    set validate(value) {
+        this._validate = value;
+    }
+    handles(file) {
+        return this.syncedBuffers.has(file);
+    }
+    reOpenDocuments() {
+        for (const buffer of this.syncedBuffers.values()) {
+            buffer.open();
+        }
+    }
+    dispose() {
         while (this.disposables.length) {
-            var obj = this.disposables.pop();
+            const obj = this.disposables.pop();
             if (obj) {
                 obj.dispose();
             }
         }
-    };
-    BufferSyncSupport.prototype.onDidOpenTextDocument = function (document) {
-        if (!this.modeIds[document.languageId]) {
+    }
+    onDidOpenTextDocument(document) {
+        if (!this.modeIds.has(document.languageId)) {
             return;
         }
-        if (document.isUntitled) {
-            return;
-        }
-        var resource = document.uri;
-        var filepath = this.client.asAbsolutePath(resource);
+        const resource = document.uri;
+        const filepath = this.client.normalizePath(resource);
         if (!filepath) {
             return;
         }
-        var syncedBuffer = new SyncedBuffer(document, filepath, this, this.client);
-        this.syncedBuffers[filepath] = syncedBuffer;
+        const syncedBuffer = new SyncedBuffer(document, filepath, this, this.client);
+        this.syncedBuffers.set(filepath, syncedBuffer);
         syncedBuffer.open();
         this.requestDiagnostic(filepath);
-        this.checkTSCVersion();
-    };
-    BufferSyncSupport.prototype.onDidCloseTextDocument = function (document) {
-        var filepath = this.client.asAbsolutePath(document.uri);
+        if (document.languageId === 'typescript' || document.languageId === 'typescriptreact') {
+            this.checkTSCVersion();
+        }
+    }
+    onDidCloseTextDocument(document) {
+        let filepath = this.client.normalizePath(document.uri);
         if (!filepath) {
             return;
         }
-        var syncedBuffer = this.syncedBuffers[filepath];
+        const syncedBuffer = this.syncedBuffers.get(filepath);
         if (!syncedBuffer) {
             return;
         }
         this.diagnostics.delete(filepath);
-        delete this.syncedBuffers[filepath];
+        this.syncedBuffers.delete(filepath);
         syncedBuffer.close();
         if (!fs.existsSync(filepath)) {
             this.requestAllDiagnostics();
         }
-    };
-    BufferSyncSupport.prototype.onDidChangeTextDocument = function (e) {
-        var filepath = this.client.asAbsolutePath(e.document.uri);
+    }
+    onDidChangeTextDocument(e) {
+        let filepath = this.client.normalizePath(e.document.uri);
         if (!filepath) {
             return;
         }
-        var syncedBuffer = this.syncedBuffers[filepath];
+        let syncedBuffer = this.syncedBuffers.get(filepath);
         if (!syncedBuffer) {
             return;
         }
         syncedBuffer.onContentChanged(e.contentChanges);
-    };
-    BufferSyncSupport.prototype.onDidSaveTextDocument = function (document) {
-        var filepath = this.client.asAbsolutePath(document.uri);
-        if (!filepath) {
-            return;
-        }
-        var syncedBuffer = this.syncedBuffers[filepath];
-        if (!syncedBuffer) {
-            return;
-        }
-    };
-    BufferSyncSupport.prototype.requestAllDiagnostics = function () {
-        var _this = this;
+    }
+    requestAllDiagnostics() {
         if (!this._validate) {
             return;
         }
-        Object.keys(this.syncedBuffers).forEach(function (filePath) { return _this.pendingDiagnostics[filePath] = Date.now(); });
-        this.diagnosticDelayer.trigger(function () {
-            _this.sendPendingDiagnostics();
+        for (const filePath of this.syncedBuffers.keys()) {
+            this.pendingDiagnostics.set(filePath, Date.now());
+        }
+        this.diagnosticDelayer.trigger(() => {
+            this.sendPendingDiagnostics();
         }, 200);
-    };
-    BufferSyncSupport.prototype.requestDiagnostic = function (file) {
-        var _this = this;
-        if (!this._validate || this.client.experimentalAutoBuild) {
+    }
+    requestDiagnostic(file) {
+        if (!this._validate) {
             return;
         }
-        this.pendingDiagnostics[file] = Date.now();
-        var buffer = this.syncedBuffers[file];
-        var delay = 300;
+        this.pendingDiagnostics.set(file, Date.now());
+        const buffer = this.syncedBuffers.get(file);
+        let delay = 300;
         if (buffer) {
-            var lineCount = buffer.lineCount;
+            let lineCount = buffer.lineCount;
             delay = Math.min(Math.max(Math.ceil(lineCount / 20), 300), 800);
         }
-        this.diagnosticDelayer.trigger(function () {
-            _this.sendPendingDiagnostics();
+        this.diagnosticDelayer.trigger(() => {
+            this.sendPendingDiagnostics();
         }, delay);
-    };
-    BufferSyncSupport.prototype.sendPendingDiagnostics = function () {
-        var _this = this;
+    }
+    sendPendingDiagnostics() {
         if (!this._validate) {
             return;
         }
-        var files = Object.keys(this.pendingDiagnostics).map(function (key) {
+        let files = Array.from(this.pendingDiagnostics.entries()).map(([key, value]) => {
             return {
                 file: key,
-                time: _this.pendingDiagnostics[key]
+                time: value
             };
-        }).sort(function (a, b) {
+        }).sort((a, b) => {
             return a.time - b.time;
-        }).map(function (value) {
+        }).map((value) => {
             return value.file;
         });
         // Add all open TS buffers to the geterr request. They might be visible
-        Object.keys(this.syncedBuffers).forEach(function (file) {
-            if (!_this.pendingDiagnostics[file]) {
+        for (const file of this.syncedBuffers.keys()) {
+            if (!this.pendingDiagnostics.get(file)) {
                 files.push(file);
             }
-        });
-        var args = {
-            delay: 0,
-            files: files
-        };
-        this.client.execute('geterr', args, false);
-        this.pendingDiagnostics = Object.create(null);
-    };
-    BufferSyncSupport.prototype.checkTSCVersion = function () {
+        }
+        if (files.length) {
+            const args = {
+                delay: 0,
+                files: files
+            };
+            this.client.execute('geterr', args, false);
+        }
+        this.pendingDiagnostics.clear();
+    }
+    checkTSCVersion() {
         if (!this.checkGlobalTSCVersion) {
             return;
         }
         this.checkGlobalTSCVersion = false;
-        function openUrl(url) {
-            var cmd;
-            switch (process.platform) {
-                case 'darwin':
-                    cmd = 'open';
-                    break;
-                case 'win32':
-                    cmd = 'start';
-                    break;
-                default:
-                    cmd = 'xdg-open';
-            }
-            return cp.exec(cmd + ' ' + url);
-        }
-        var tscVersion = undefined;
+        let tscVersion = undefined;
         try {
-            var out = cp.execSync('tsc --version', { encoding: 'utf8' });
+            let out = cp.execSync('tsc --version', { encoding: 'utf8' });
             if (out) {
-                var matches = out.trim().match(/Version\s*(.*)$/);
+                let matches = out.trim().match(/Version\s*(.*)$/);
                 if (matches && matches.length === 2) {
                     tscVersion = matches[1];
                 }
@@ -283,25 +244,23 @@ var BufferSyncSupport = (function () {
                 title: localize(3, null),
                 id: 3,
                 isCloseAffordance: true
-            }).then(function (selected) {
+            }).then((selected) => {
                 if (!selected || selected.id === 3) {
                     return;
                 }
                 switch (selected.id) {
                     case 1:
-                        openUrl('http://go.microsoft.com/fwlink/?LinkId=826239');
+                        vscode_1.commands.executeCommand('vscode.open', vscode_1.Uri.parse('http://go.microsoft.com/fwlink/?LinkId=826239'));
                         break;
                     case 2:
-                        var tsConfig = vscode_1.workspace.getConfiguration('typescript');
+                        const tsConfig = vscode_1.workspace.getConfiguration('typescript');
                         tsConfig.update(checkTscVersionSettingKey, false, true);
                         vscode_1.window.showInformationMessage(localize(4, null));
                         break;
                 }
             });
         }
-    };
-    return BufferSyncSupport;
-}());
-Object.defineProperty(exports, "__esModule", { value: true });
+    }
+}
 exports.default = BufferSyncSupport;
-//# sourceMappingURL=https://ticino.blob.core.windows.net/sourcemaps/ee428b0eead68bf0fb99ab5fdc4439be227b6281/extensions/typescript/out/features/bufferSyncSupport.js.map
+//# sourceMappingURL=https://ticino.blob.core.windows.net/sourcemaps/2648980a697a4c8fb5777dcfb2ab110cec8a2f58/extensions/typescript/out/features/bufferSyncSupport.js.map

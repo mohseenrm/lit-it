@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 var URL = require("url");
 var PathUtils = require("./pathUtilities");
 function isWindows(absPath) {
@@ -39,6 +40,7 @@ var URI = (function () {
                 else {
                     throw new Error('base path not absolute');
                 }
+                //path = PathUtils.makePathAbsolute(base, path);
             }
             else {
                 throw new Error('base path missing');

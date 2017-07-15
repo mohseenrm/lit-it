@@ -1,5 +1,5 @@
 [
-	"Le versioni non corrispondono. Compilatore tsc globale ({0}) != servizio di linguaggio di Visual Studio Code ({1}). Potrebbero verificarsi errori di compilazione incoerente",
+	"TypeScript ({1}) è in uso per le funzionalità dell'editor. TypeScript ({0}) è installato sul computer. Errori di VS Code possono differire dagli errori di TSC",
 	"Altre informazioni",
 	"Non eseguire più la verifica",
 	"Chiudi",

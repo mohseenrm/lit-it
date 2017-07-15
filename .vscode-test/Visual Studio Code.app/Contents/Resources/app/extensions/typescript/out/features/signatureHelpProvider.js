@@ -1,39 +1,34 @@
+"use strict";
 /*---------------------------------------------------------------------------------------------
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-'use strict';
-var vscode_1 = require('vscode');
-var Previewer = require('./previewer');
-var TypeScriptSignatureHelpProvider = (function () {
-    function TypeScriptSignatureHelpProvider(client) {
+Object.defineProperty(exports, "__esModule", { value: true });
+const vscode_1 = require("vscode");
+const Previewer = require("./previewer");
+class TypeScriptSignatureHelpProvider {
+    constructor(client) {
         this.client = client;
     }
-    TypeScriptSignatureHelpProvider.prototype.provideSignatureHelp = function (document, position, token) {
-        var _this = this;
-        var filepath = this.client.asAbsolutePath(document.uri);
+    provideSignatureHelp(document, position, token) {
+        const filepath = this.client.normalizePath(document.uri);
         if (!filepath) {
             return Promise.resolve(null);
         }
-        var args = {
+        const args = {
             file: filepath,
             line: position.line + 1,
             offset: position.character + 1
         };
-        if (!args.file) {
-            return Promise.resolve(null);
-        }
-        return this.client.execute('signatureHelp', args, token).then(function (response) {
-            var info = response.body;
+        return this.client.execute('signatureHelp', args, token).then((response) => {
+            const info = response.body;
             if (!info) {
                 return null;
             }
-            var result = new vscode_1.SignatureHelp();
+            const result = new vscode_1.SignatureHelp();
             result.activeSignature = info.selectedItemIndex;
             result.activeParameter = info.argumentIndex;
-            if (info.items[info.selectedItemIndex].isVariadic) {
-            }
-            info.items.forEach(function (item, i) {
+            info.items.forEach((item, i) => {
                 if (!info) {
                     return;
                 }
@@ -41,10 +36,10 @@ var TypeScriptSignatureHelpProvider = (function () {
                 if (i === info.selectedItemIndex && item.isVariadic) {
                     result.activeParameter = Math.min(info.argumentIndex, item.parameters.length - 1);
                 }
-                var signature = new vscode_1.SignatureInformation('');
+                const signature = new vscode_1.SignatureInformation('');
                 signature.label += Previewer.plain(item.prefixDisplayParts);
-                item.parameters.forEach(function (p, i, a) {
-                    var parameter = new vscode_1.ParameterInformation(Previewer.plain(p.displayParts), Previewer.plain(p.documentation));
+                item.parameters.forEach((p, i, a) => {
+                    const parameter = new vscode_1.ParameterInformation(Previewer.plain(p.displayParts), Previewer.plain(p.documentation));
                     signature.label += parameter.label;
                     signature.parameters.push(parameter);
                     if (i < a.length - 1) {
@@ -52,17 +47,14 @@ var TypeScriptSignatureHelpProvider = (function () {
                     }
                 });
                 signature.label += Previewer.plain(item.suffixDisplayParts);
-                signature.documentation = Previewer.plain(item.documentation);
+                signature.documentation = Previewer.plainDocumentation(item.documentation, item.tags);
                 result.signatures.push(signature);
             });
             return result;
-        }, function (err) {
-            _this.client.error("'signatureHelp' request failed with error.", err);
+        }, () => {
             return null;
         });
-    };
-    return TypeScriptSignatureHelpProvider;
-}());
-Object.defineProperty(exports, "__esModule", { value: true });
+    }
+}
 exports.default = TypeScriptSignatureHelpProvider;
-//# sourceMappingURL=https://ticino.blob.core.windows.net/sourcemaps/ee428b0eead68bf0fb99ab5fdc4439be227b6281/extensions/typescript/out/features/signatureHelpProvider.js.map
+//# sourceMappingURL=https://ticino.blob.core.windows.net/sourcemaps/2648980a697a4c8fb5777dcfb2ab110cec8a2f58/extensions/typescript/out/features/signatureHelpProvider.js.map
