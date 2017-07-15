@@ -1,6 +1,5 @@
 /* global suite, test */
 
-
 // The module 'assert' provides assertion methods from node
 import * as assert from 'assert';
 
@@ -9,23 +8,21 @@ import * as assert from 'assert';
 import * as vscode from 'vscode';
 import {expect} from 'chai';
 
-const lit = require('../extension');
-
-const {
+import {
     checkSignature,
     extractParameters,
     prettyParameters,
     functionDocString,
     extractFunctionName
-} = lit;
+} from '../src/extension';
 
-suite("Doc String generation", () => {
-    
-    test("standard function signature check", () => {
-        const functionSignature = " function testFn(x, y){";
-        const functionSignature2 = "export default function testFn(x, y)";
-        const functionSignature3 = "const beta = function testFn()";
-        const functionSignature4 = "var x = function testFn(y){";
+suite('Doc String generation', () => {
+
+    test('standard function signature check', () => {
+        const functionSignature = ' function testFn(x, y){';
+        const functionSignature2 = 'export default function testFn(x, y)';
+        const functionSignature3 = 'const beta = function testFn()';
+        const functionSignature4 = 'var x = function testFn(y){';
 
         expect( checkSignature( functionSignature ) ).to.be.equal( 'FUNCTION' );
         expect( checkSignature( functionSignature2 ) ).to.be.equal( 'FUNCTION' );
@@ -33,12 +30,12 @@ suite("Doc String generation", () => {
         expect( checkSignature( functionSignature4 ) ).to.be.equal( 'FUNCTION' );
     });
 
-    test("ES6 function signature check", () => {
-        const signature = "() => {";
-        const signature2 = "( velocity ) => {";
-        const signature3 = "( velocity, distance ) => {";
-        const signature4 = "const testES6 = ( x ) => { return x+1 };";
-        const signature5 = "let x = (x) => x*3;";
+    test('ES6 function signature check', () => {
+        const signature = '() => {';
+        const signature2 = '( velocity ) => {';
+        const signature3 = '( velocity, distance ) => {';
+        const signature4 = 'const testES6 = ( x ) => { return x+1 };';
+        const signature5 = 'let x = (x) => x*3;';
 
         expect( checkSignature( signature ) ).to.be.equal( 'ES6' );
         expect( checkSignature( signature2 ) ).to.be.equal( 'ES6' );
@@ -47,7 +44,7 @@ suite("Doc String generation", () => {
         expect( checkSignature( signature5 ) ).to.be.equal( 'ES6' );
     });
 
-    test("check parameters", () => {
+    test('check parameters', () => {
         const signature = ' function fn1(){';
         const signature2 = ' function fn2(a, b, c)';
         const signature3 = ' () = {console.log();}';
@@ -56,10 +53,10 @@ suite("Doc String generation", () => {
         expect( extractParameters( signature ) ).to.deep.equal( [] );
         expect( extractParameters( signature2 ) ).to.deep.equal( ['a', 'b', 'c'] );
         expect( extractParameters( signature3 ) ).to.deep.equal( [] );
-        expect( extractParameters( signature4 ) ).to.deep.equal( ['x', 'y', 'z'] );     
+        expect( extractParameters( signature4 ) ).to.deep.equal( ['x', 'y', 'z'] );
     });
 
-    test("pretty formatting", () => {
+    test('pretty formatting', () => {
         const signature = [];
         const signature2 = ['param1', 'param', 'xz', 'x'];
         const signature3 = ['xyz'];
@@ -71,7 +68,7 @@ suite("Doc String generation", () => {
         expect( prettyParameters( signature4 ) ).to.deep.equal( ['first_parameter', 'a              ', 'param2         '] );
     });
 
-    test("extracting function name", () => {
+    test('extracting function name', () => {
         const signature = 'const customFn = () => {}';
         const signature2 = 'let customFn = () => {}';
         const signature3 = 'var customFn = function(x) => {';
@@ -87,29 +84,27 @@ suite("Doc String generation", () => {
         expect( extractFunctionName( signature6 ) ).to.equal( 'x' );
     });
 
-    test("correctly indents nested blocks", () => {
+    test('correctly indents nested blocks', () => {
         const oneSpaceSignature = ' fn(){';
-        const oneSpaceExpected = 
+        const oneSpaceExpected =
         ' /**\n' +
         '  * @function {function name}\n' +
-        '  * @return {type} {description}\n'+
+        '  * @return {type} {description}\n' +
         '  */\n';
 
         const threeSpaceIndentSignature = '   fn(){';
-        const threeSpaceIndentExpected = 
+        const threeSpaceIndentExpected =
         '   /**\n' +
         '    * @function {function name}\n' +
-        '    * @return {type} {description}\n'+
+        '    * @return {type} {description}\n' +
         '    */\n';
 
         const fourSpaceIndentSignature = '    fn(){';
-        const fourSpaceIndentExpected = 
+        const fourSpaceIndentExpected =
         '    /**\n' +
         '     * @function {function name}\n' +
-        '     * @return {type} {description}\n'+
+        '     * @return {type} {description}\n' +
         '     */\n';
-
-
 
         expect (functionDocString(oneSpaceSignature)).to.equal(oneSpaceExpected);
         expect (functionDocString(threeSpaceIndentSignature)).to.equal(threeSpaceIndentExpected);
