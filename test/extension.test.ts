@@ -1,8 +1,15 @@
 /* global suite, test */
 
-const vscode = require('vscode');
+
+// The module 'assert' provides assertion methods from node
+import * as assert from 'assert';
+
+// You can import and use all API from the 'vscode' module
+// as well as import your extension to test it
+import * as vscode from 'vscode';
+import {expect} from 'chai';
+
 const lit = require('../extension');
-const expect = require('chai').expect;
 
 const {
     checkSignature,
@@ -12,9 +19,9 @@ const {
     extractFunctionName
 } = lit;
 
-describe("Doc String generation", () => {
+suite("Doc String generation", () => {
     
-    it("standard function signature check", () => {
+    test("standard function signature check", () => {
         const functionSignature = " function testFn(x, y){";
         const functionSignature2 = "export default function testFn(x, y)";
         const functionSignature3 = "const beta = function testFn()";
@@ -26,7 +33,7 @@ describe("Doc String generation", () => {
         expect( checkSignature( functionSignature4 ) ).to.be.equal( 'FUNCTION' );
     });
 
-    it("ES6 function signature check", () => {
+    test("ES6 function signature check", () => {
         const signature = "() => {";
         const signature2 = "( velocity ) => {";
         const signature3 = "( velocity, distance ) => {";
@@ -40,7 +47,7 @@ describe("Doc String generation", () => {
         expect( checkSignature( signature5 ) ).to.be.equal( 'ES6' );
     });
 
-    it("check parameters", () => {
+    test("check parameters", () => {
         const signature = ' function fn1(){';
         const signature2 = ' function fn2(a, b, c)';
         const signature3 = ' () = {console.log();}';
@@ -52,7 +59,7 @@ describe("Doc String generation", () => {
         expect( extractParameters( signature4 ) ).to.deep.equal( ['x', 'y', 'z'] );     
     });
 
-    it("pretty formatting", () => {
+    test("pretty formatting", () => {
         const signature = [];
         const signature2 = ['param1', 'param', 'xz', 'x'];
         const signature3 = ['xyz'];
@@ -64,7 +71,7 @@ describe("Doc String generation", () => {
         expect( prettyParameters( signature4 ) ).to.deep.equal( ['first_parameter', 'a              ', 'param2         '] );
     });
 
-    it("extracting function name", () => {
+    test("extracting function name", () => {
         const signature = 'const customFn = () => {}';
         const signature2 = 'let customFn = () => {}';
         const signature3 = 'var customFn = function(x) => {';
@@ -80,7 +87,7 @@ describe("Doc String generation", () => {
         expect( extractFunctionName( signature6 ) ).to.equal( 'x' );
     });
 
-    it("correctly indents nested blocks", () => {
+    test("correctly indents nested blocks", () => {
         const oneSpaceSignature = ' fn(){';
         const oneSpaceExpected = 
         ' /**\n' +
