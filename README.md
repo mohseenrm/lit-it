@@ -8,7 +8,6 @@ Lit it is a lightweight lazy JSDoc builder, that recognizes the function signatu
 ![Demo](https://raw.githubusercontent.com/mohseenrm/lit-it/master/images/demo.gif)
 
 UPDATE: now supports ES6 syntax.
-//https://travis-ci.org/mohseenrm/lit-it.svg?branch=master
 
 <table>
   <thead>
@@ -25,6 +24,8 @@ UPDATE: now supports ES6 syntax.
     </tr>
   </tbody>
 </table>
+
+
 ## How to Use?
 1)  Move caret on the line above function
 2) **F1** + type **Lit it** + hit **Enter**
@@ -61,4 +62,4 @@ Standard function signature support.
 
 License
 ----
-Apache 2.0
+MIT
