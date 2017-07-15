@@ -36,6 +36,15 @@
         ],
         "max-line-length": [
             false
+        ],
+        "typedef": [
+            true,
+            "call-signature",
+            "parameter",
+            "member-variable-declaration",
+            "arrow-parameter",
+            "property-declaration",
+            "variable-declaration"
         ]
     },
     "rulesDirectory": []
