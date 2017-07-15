@@ -61,3 +61,6 @@ typings/
 
 # Vscode test
 .vscode-test/*
+
+# Builds
+out
