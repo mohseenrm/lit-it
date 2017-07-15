@@ -10,7 +10,7 @@ os:
   - linux
 
 before_install:
-  - git clean
+  - git clean -xdff
   - npm i -g yarn@latest 
   - if [ $TRAVIS_OS_NAME == "linux" ]; then
       export CXX="g++-4.9" CC="gcc-4.9" DISPLAY=:99.0;
