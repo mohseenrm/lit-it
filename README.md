@@ -8,7 +8,23 @@ Lit it is a lightweight lazy JSDoc builder, that recognizes the function signatu
 ![Demo](https://raw.githubusercontent.com/mohseenrm/lit-it/master/images/demo.gif)
 
 UPDATE: now supports ES6 syntax.
+//https://travis-ci.org/mohseenrm/lit-it.svg?branch=master
 
+<table>
+  <thead>
+    <tr>
+      <th>Linux</th>
+      <th>OS X</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td colspan="2" align="center">
+        <a href="https://travis-ci.org/mohseenrm/lit-it"><img src="https://travis-ci.org/mohseenrm/lit-it.svg?branch=master" target="_blank"></a>
+      </td>
+    </tr>
+  </tbody>
+</table>
 ## How to Use?
 1)  Move caret on the line above function
 2) **F1** + type **Lit it** + hit **Enter**
