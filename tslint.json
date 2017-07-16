@@ -31,13 +31,7 @@
         "prefer-const": [
             true
         ],
-        "no-console": [
-            false
-        ],
-        "max-line-length": [
-            false
-        ],
-        "no-default-export": false,
+                "no-default-export": false,
         "no-require-imports": true,
         "align": [
             true, 
@@ -68,6 +62,21 @@
             "check-module",
             "check-preblock",
             "check-separator"
+        ]
+        "no-console": [
+            false
+        ],
+        "max-line-length": [
+            false
+        ],
+        "typedef": [
+            true,
+            "call-signature",
+            "parameter",
+            "member-variable-declaration",
+            "arrow-parameter",
+            "property-declaration",
+            "variable-declaration"
         ]
     },
     "rulesDirectory": []
