@@ -9,6 +9,23 @@ Lit it is a lightweight lazy JSDoc builder, that recognizes the function signatu
 
 UPDATE: now supports ES6 syntax.
 
+<table>
+  <thead>
+    <tr>
+      <th>Linux</th>
+      <th>OS X</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td colspan="2" align="center">
+        <a href="https://travis-ci.org/mohseenrm/lit-it"><img src="https://travis-ci.org/mohseenrm/lit-it.svg?branch=master" target="_blank"></a>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
 ## How to Use?
 1)  Move caret on the line above function
 2) **F1** + type **Lit it** + hit **Enter**
@@ -25,11 +42,12 @@ ext install lit-it
 
 ### Build
 ```
-npm i
+yarn
+yarn compile
 ```
 
 ### Test
-Use the .vscode config to run the tests locally. Naviagate to debug panel and launch tests or launch extension. 
+yarn test
 
 ## Release Notes
 
@@ -45,4 +63,4 @@ Standard function signature support.
 
 License
 ----
-Apache 2.0
+MIT

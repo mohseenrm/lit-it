@@ -29,7 +29,39 @@
             false
         ],
         "prefer-const": [
-            false
+            true
+        ],
+        "no-default-export": false,
+        "no-require-imports": true,
+        "align": [
+            true, 
+            "parameters", 
+            "statements"
+        ],
+        "no-irregular-whitespace": true,
+        "no-trailing-whitespace": [
+            true, 
+            "ignore-jsdoc",
+            "ignore-comments"
+        ],
+        "ordered-imports": true,
+        "semicolon": [
+            true, 
+            "always"
+        ],
+        "space-before-function-paren": [
+            true, 
+            "always"
+        ],
+        "whitespace": [
+            true, 
+            "check-branch", 
+            "check-operator", 
+            "check-typecast",
+            "check-decl",
+            "check-module",
+            "check-preblock",
+            "check-separator"
         ],
         "no-console": [
             false
