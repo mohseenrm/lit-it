@@ -15,8 +15,7 @@
         ],
         "quotemark": [
             true,
-            "single",
-            "jsx-double"
+            "single"
         ],
         "trailing-comma": [
             false
@@ -30,7 +29,7 @@
         "prefer-const": [
             true
         ],
-                "no-default-export": false,
+        "no-default-export": false,
         "no-require-imports": true,
         "align": [
             true, 
