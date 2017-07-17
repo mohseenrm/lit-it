@@ -38,12 +38,7 @@
             "statements"
         ],
         "no-irregular-whitespace": true,
-        "no-trailing-whitespace": [
-            true, 
-            "ignore-jsdoc",
-            "ignore-comments"
-        ],
-        "ordered-imports": true,
+        "no-trailing-whitespace": true,
         "semicolon": [
             true, 
             "always"
