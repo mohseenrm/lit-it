@@ -61,7 +61,7 @@
             "check-module",
             "check-preblock",
             "check-separator"
-        ]
+        ],
         "no-console": [
             false
         ],
