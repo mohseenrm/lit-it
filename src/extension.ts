@@ -13,7 +13,7 @@ import {
     WorkspaceEdit,
     ExtensionContext
 } from 'vscode';
-let count: number;
+let count: number = 0;
 
 // https://code.visualstudio.com/Docs/extensionAPI/vscode-api#_workspace
 // subscribe to onDidChangeTextDocument and add move selection
@@ -62,7 +62,6 @@ export function activate ( context: ExtensionContext ): void {
             // apply edit
             vscode.workspace.applyEdit( workSpaceEdit );
         } else { vscode.window.showInformationMessage( 'Lit-it does not work with selection' ); }
-        count = 0;
         const dispose: Disposable = vscode.workspace.onDidChangeTextDocument( tabEventListner );
         // probably use promises to dispose the event listener
 
@@ -89,7 +88,7 @@ export function checkSignature ( signature: string ): string {
 
 export function functionDocString ( signature: string ): string {
     const indentNum: number = signature.search(/\S/);
-    let indent: string = ``;
+    let indent: string = '';
     for (let i: number = 0; i < indentNum; i++) {
         indent += ' ';
     }

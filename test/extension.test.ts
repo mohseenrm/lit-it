@@ -82,25 +82,25 @@ suite('Doc String generation', () => {
     test('correctly indents nested blocks', () => {
         const oneSpaceSignature: string = ' fn(){';
         const oneSpaceExpected: string =
-        ` /**\n\
-           * @function {function name}\n\
-           * @return {type} {description}\n\
-           */\n`;
+        ' /**\n' +
+        '  * @function {function name}\n' +
+        '  * @return {type} {description}\n' +
+        '  */\n';
 
         const threeSpaceIndentSignature: string = '   fn(){';
         const threeSpaceIndentExpected: string =
-        `   /**\n\
-             * @function {function name}\n\
-             * @return {type} {description}\n\
-             */\n`;
+        '   /**\n' +
+        '    * @function {function name}\n' +
+        '    * @return {type} {description}\n' +
+        '    */\n';
 
         const fourSpaceIndentSignature: string = '    fn(){';
         const fourSpaceIndentExpected: string =
-        `    /**\n\
-              * @function {function name}\n\
-              * @return {type} {description}\n\
-              */\n`;
-
+        '    /**\n' +
+        '     * @function {function name}\n' +
+        '     * @return {type} {description}\n' +
+        '     */\n';
+        // console.log('DEBUG: \n', functionDocString(oneSpaceSignature));
         expect (functionDocString(oneSpaceSignature)).to.equal(oneSpaceExpected);
         expect (functionDocString(threeSpaceIndentSignature)).to.equal(threeSpaceIndentExpected);
         expect (functionDocString(fourSpaceIndentSignature)).to.equal(fourSpaceIndentExpected);
