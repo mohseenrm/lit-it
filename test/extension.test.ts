@@ -1,7 +1,7 @@
 // You can import and use all API from the 'vscode' module
 // as well as import your extension to test it
 import * as vscode from 'vscode';
-import {expect} from 'chai';
+import { expect } from 'chai';
 
 import {
     checkSignature,
@@ -82,24 +82,24 @@ suite('Doc String generation', () => {
     test('correctly indents nested blocks', () => {
         const oneSpaceSignature: string = ' fn(){';
         const oneSpaceExpected: string =
-        ' /**\n' +
-        '  * @function {function name}\n' +
-        '  * @return {type} {description}\n' +
-        '  */\n';
+        ` /**\n\
+           * @function {function name}\n\
+           * @return {type} {description}\n\
+           */\n`;
 
         const threeSpaceIndentSignature: string = '   fn(){';
         const threeSpaceIndentExpected: string =
-        '   /**\n' +
-        '    * @function {function name}\n' +
-        '    * @return {type} {description}\n' +
-        '    */\n';
+        `   /**\n\
+             * @function {function name}\n\
+             * @return {type} {description}\n\
+             */\n`;
 
         const fourSpaceIndentSignature: string = '    fn(){';
         const fourSpaceIndentExpected: string =
-        '    /**\n' +
-        '     * @function {function name}\n' +
-        '     * @return {type} {description}\n' +
-        '     */\n';
+        `    /**\n\
+              * @function {function name}\n\
+              * @return {type} {description}\n\
+              */\n`;
 
         expect (functionDocString(oneSpaceSignature)).to.equal(oneSpaceExpected);
         expect (functionDocString(threeSpaceIndentSignature)).to.equal(threeSpaceIndentExpected);

@@ -23,16 +23,16 @@ let count: number;
  * @param  {type} context {description}
  * @return {type} {description}
  */
-export function activate(context: ExtensionContext): void {
+export function activate ( context: ExtensionContext ): void {
 
     // Use the console to output diagnostic information (console.log) and errors (console.error)
     // This line of code will only be executed once when your extension is activated
-    console.log('Congratulations, your extension "Lit-it" is now active!');
+    console.log( 'Congratulations, your extension "Lit - it" is now active!' );
 
     // The command has been defined in the package.json file
     // Now provide the implementation of the command with  registerCommand
     // The commandId parameter must match the command field in package.json
-    const disposable: Disposable = vscode.commands.registerCommand('extension.litIt', () => {
+    const disposable: Disposable = vscode.commands.registerCommand( 'extension.litIt', () => {
 
         // doc reference
         // https://code.visualstudio.com/Docs/extensionAPI/vscode-api#Range
@@ -44,7 +44,8 @@ export function activate(context: ExtensionContext): void {
             console.log( position );
             // test case if line is 1;
             // get below line
-            const requiredRange: Range = new Range( ( position.line + 1 ), 0, ( position.line + 2 ), 0 );
+            const offset: number = 2;
+            const requiredRange: Range = new Range( ( position.line + 1 ), 0, ( position.line + offset ), 0 );
 
             const textOfInterest: string = editor.document.getText( requiredRange );
             console.log( textOfInterest );
@@ -62,21 +63,21 @@ export function activate(context: ExtensionContext): void {
             vscode.workspace.applyEdit( workSpaceEdit );
         } else { vscode.window.showInformationMessage( 'Lit-it does not work with selection' ); }
         count = 0;
-        const dispose: Disposable = vscode.workspace.onDidChangeTextDocument(tabEventListner);
+        const dispose: Disposable = vscode.workspace.onDidChangeTextDocument( tabEventListner );
         // probably use promises to dispose the event listener
 
     });
 
-    context.subscriptions.push(disposable);
+    context.subscriptions.push( disposable );
 }
 
 // this method is called when your extension is deactivated
-export function deactivate(): boolean {
+export function deactivate (): boolean {
     return true;
 }
 
 // file signature
-export function checkSignature( signature: string ): string {
+export function checkSignature ( signature: string ): string {
     if ( signature.includes( 'function' ) ) {
         return 'FUNCTION';
     }
@@ -86,7 +87,7 @@ export function checkSignature( signature: string ): string {
  * @author Mohseen Mukaddam <mohseenmukaddam6@gmail.com>
  */
 
-export function functionDocString( signature: string ): string {
+export function functionDocString ( signature: string ): string {
     const indentNum: number = signature.search(/\S/);
     let indent: string = ``;
     for (let i: number = 0; i < indentNum; i++) {
@@ -118,12 +119,12 @@ export function functionDocString( signature: string ): string {
  * @param  {String} signature The function signature
  * @return {List} List of parameters
  */
-export function extractParameters( signature: string ): string[] {
+export function extractParameters ( signature: string ): string[] {
     const possibleParameters: string = signature.slice( signature.indexOf( '(' ) + 1, signature.indexOf( ')' ) ).trim();
     return (possibleParameters === '') ? [] : possibleParameters.split( ',' ).map( (str: string) => str.trim() );
 }
 
-export function addPadding( str: string, max: number ): string  {
+export function addPadding ( str: string, max: number ): string  {
     if ( str.length < max ) {
         let i: number = str.length;
         for ( ; i < max; i++ ) {
@@ -134,7 +135,7 @@ export function addPadding( str: string, max: number ): string  {
     return str;
 }
 
-export function prettyParameters( listOfParameters: string[] ): string[] {
+export function prettyParameters ( listOfParameters: string[] ): string[] {
     const lengths: number[] = listOfParameters.map( (str: string) => str.length );
     const max: any = Math.max.apply( null, lengths );
 
@@ -142,11 +143,12 @@ export function prettyParameters( listOfParameters: string[] ): string[] {
     return listOfParameters.map( mappingFunction );
 }
 
-export function extractFunctionName( signature: string ): string {
+export function extractFunctionName ( signature: string ): string {
     // check if contains function -> else check var. let, const
     // if yes check name in front -> else check var, let, const
     if ( signature.includes( 'function' ) ) {
-        const currentPosition: number = signature.indexOf( 'function' ) + 8;
+        const offset: number = 8;
+        const currentPosition: number = signature.indexOf( 'function' ) + offset;
         const endSlicePosition: number = signature.indexOf( '(' );
         const name: string = signature.slice( currentPosition, endSlicePosition ).trim();
         return ( name !== '' ) ? name : extractAlternateFunctionName( signature );
@@ -154,7 +156,7 @@ export function extractFunctionName( signature: string ): string {
     return extractAlternateFunctionName( signature );
 }
 
-export function extractAlternateFunctionName( signature: string ): string {
+export function extractAlternateFunctionName ( signature: string ): string {
     if ( signature.includes( 'var' ) || signature.includes( 'let' ) || signature.includes( 'const' ) ) {
         if ( signature.includes( '=' ) ) {
             interface IMapIndex {
@@ -178,6 +180,6 @@ export function extractAlternateFunctionName( signature: string ): string {
     return '';
 }
 
-function tabEventListner(): void {
+function tabEventListner (): void {
     count++;
 }
