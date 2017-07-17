@@ -70,6 +70,24 @@
             "arrow-parameter",
             "property-declaration",
             "variable-declaration"
-        ]
+        ],
+        "no-magic-numbers": [
+            true
+        ],
+        "no-reference": true,
+        "curly": true,
+        "no-string-literal": true,
+        "no-string-throw": true,
+        "no-var-keyword": true,
+        "switch-default": true,
+        "triple-equals": true,
+        "eofline": true,
+        "arrow-return-shorthand": true,
+        "interface-name": [
+            "always-prefix"
+        ],
+        "no-consecutive-blank-lines": true,
+        "object-literal-shorthand": true,
+        "prefer-template": true
     }
 }
