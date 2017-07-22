@@ -51,6 +51,12 @@ suite('Doc String generation', () => {
         expect( extractParameters( signature4 ) ).to.deep.equal( ['x', 'y', 'z'] );
     });
 
+    test.only('check parameters with es6 destructuring', () => {
+        const signature: string = 'const connect = ( url , { USE_SSL , SSL , logger = console  }) => {';
+
+        expect( extractParameters( signature ) ).to.deep.equal( ['url', 'USE_SSL', 'SSL', 'logger'] );
+    });
+
     test('pretty formatting', () => {
         const signature: string[] = [];
         const signature2: string[] = ['param1', 'param', 'xz', 'x'];
