@@ -48,7 +48,7 @@
     "postinstall": "node \"node_modules/vscode/bin/install\"",
     "pretest": "yarn tslint",
     "test": "node \"node_modules/vscode/bin/test\"",
-    "tslint": "\"node_modules/.bin/tslint\" -c ./tslint.json \"./**/*.ts\" -e \"./node_modules/**\"", 
+    "tslint": "\"node_modules/.bin/tslint\" -c ./tslint.json \"./**/*.ts\" -e \"./node_modules/**\"",
     "tslint:quick-fix": "\"node_modules/.bin/tslint\" -c ./tslint.json \"./**/*.ts\" -e \"./node_modules/**\" --fix"
   },
   "devDependencies": {
@@ -61,5 +61,8 @@
     "tslint-eslint-rules": "^4.1.1",
     "typescript": "^2.0.3",
     "vscode": "^1.1.0"
+  },
+  "dependencies": {
+    "global": "^4.3.2"
   }
 }
