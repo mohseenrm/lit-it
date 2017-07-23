@@ -53,8 +53,14 @@ suite('Doc String generation', () => {
 
     test.only('check parameters with es6 destructuring', () => {
         const signature: string = 'const connect = ( url , { USE_SSL , SSL , logger = console  }) => {';
+        const signature2: string = 'function( { firstparam , secondparam, thirdparam}, y, z)';
+        const signature3: string = 'function( x, { firstparam , secondparam = 123, thirdparam}, z)';
+        const signature4: string = '( firstparam = 123 , { secondparam, thirdparam}, y, z)';
 
         expect( extractParameters( signature ) ).to.deep.equal( ['url', 'USE_SSL', 'SSL', 'logger'] );
+        expect( extractParameters( signature2 ) ).to.deep.equal( ['firstparam', 'secondparam', 'thirdparam', 'y', 'z'] );
+        expect( extractParameters( signature3 ) ).to.deep.equal( ['x', 'firstparam', 'secondparam', 'thirdparam', 'z'] );
+        expect( extractParameters( signature4 ) ).to.deep.equal( ['firstparam', 'secondparam', 'thirdparam', 'y', 'z'] );
     });
 
     test('pretty formatting', () => {
