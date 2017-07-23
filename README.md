@@ -51,7 +51,10 @@ yarn test
 
 ## Release Notes
 
-
+### 1.2.12
+Fixed bugs with ES6 Destructuring and default values
+### 1.2.x
+Migrated to TypeScript (thanks [@kylelamse](https://github.com/kylelamse))
 
 ### 1.1.0
 
