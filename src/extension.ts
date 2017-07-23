@@ -120,12 +120,11 @@ export function functionDocString ( signature: string ): string {
  */
 export function extractParameters ( signature: string ): string[] {
     const possibleParameters: string = signature.slice( signature.indexOf( '(' ) + 1, signature.indexOf( ')' ) ).trim();
-    console.log('possibleParameters ', possibleParameters);
-    const filteredArguments: string[] = (possibleParameters === '') ? [] : possibleParameters.split( ',' ).map( (str: string) => str.trim() );
-    const filteredArgumentsReturned: string[] = filteredArguments.map(mapES6Destructuring);
+    const filteredArguments: string[] = ( possibleParameters === '' ) ? [] : possibleParameters.split( ',' ).map( ( str: string ) => str.trim() );
+    const filteredArgumentsReturned: string[] = filteredArguments.map( mapES6Destructuring );
     return filteredArgumentsReturned;
 }
-function mapES6Destructuring (arg: string): string {
+function mapES6Destructuring ( arg: string ): string {
     let arrayOfStrings: string = arg;
     if ( arg.includes( '{' ) ) {
         arrayOfStrings = cleanFirstBracketCase( arg );

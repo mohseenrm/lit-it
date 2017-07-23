@@ -51,28 +51,28 @@ suite('Doc String generation', () => {
         expect( extractParameters( signature4 ) ).to.deep.equal( ['x', 'y', 'z'] );
     });
 
-    test.only('check parameters with es6 destructuring', () => {
+    test('check parameters with es6 destructuring', () => {
         const signature: string = 'const connect = ( url , { USE_SSL , SSL , logger = console  }) => {';
         const signature2: string = 'function( { firstparam , secondparam, thirdparam}, y, z)';
         const signature3: string = 'function( x, { firstparam , secondparam = 123, thirdparam}, z)';
         const signature4: string = '( firstparam = 123 , { secondparam, thirdparam}, y, z)';
 
-        expect( extractParameters( signature ) ).to.deep.equal( ['url', 'USE_SSL', 'SSL', 'logger'] );
-        expect( extractParameters( signature2 ) ).to.deep.equal( ['firstparam', 'secondparam', 'thirdparam', 'y', 'z'] );
-        expect( extractParameters( signature3 ) ).to.deep.equal( ['x', 'firstparam', 'secondparam', 'thirdparam', 'z'] );
-        expect( extractParameters( signature4 ) ).to.deep.equal( ['firstparam', 'secondparam', 'thirdparam', 'y', 'z'] );
+        expect( extractParameters( signature ) ).to.deep.equal( [ 'url', 'USE_SSL', 'SSL', 'logger' ] );
+        expect( extractParameters( signature2 ) ).to.deep.equal( [ 'firstparam', 'secondparam', 'thirdparam', 'y', 'z' ] );
+        expect( extractParameters( signature3 ) ).to.deep.equal( [ 'x', 'firstparam', 'secondparam', 'thirdparam', 'z' ] );
+        expect( extractParameters( signature4 ) ).to.deep.equal( [ 'firstparam', 'secondparam', 'thirdparam', 'y', 'z' ] );
     });
 
     test('pretty formatting', () => {
         const signature: string[] = [];
-        const signature2: string[] = ['param1', 'param', 'xz', 'x'];
-        const signature3: string[] = ['xyz'];
-        const signature4: string[] = ['first_parameter', 'a', 'param2'];
+        const signature2: string[] = [ 'param1', 'param', 'xz', 'x' ];
+        const signature3: string[] = [ 'xyz' ];
+        const signature4: string[] = [ 'first_parameter', 'a', 'param2' ];
 
         expect( prettyParameters( signature ) ).to.deep.equal( [] );
-        expect( prettyParameters( signature2 ) ).to.deep.equal( ['param1', 'param ', 'xz    ', 'x     '] );
-        expect( prettyParameters( signature3 ) ).to.deep.equal( ['xyz'] );
-        expect( prettyParameters( signature4 ) ).to.deep.equal( ['first_parameter', 'a              ', 'param2         '] );
+        expect( prettyParameters( signature2 ) ).to.deep.equal( [ 'param1', 'param ', 'xz    ', 'x     ' ] );
+        expect( prettyParameters( signature3 ) ).to.deep.equal( [ 'xyz' ] );
+        expect( prettyParameters( signature4 ) ).to.deep.equal( [ 'first_parameter', 'a              ', 'param2         ' ] );
     });
 
     test('extracting function name', () => {
