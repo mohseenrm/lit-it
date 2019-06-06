@@ -55,7 +55,7 @@
     "@types/chai": "^4.0.1",
     "@types/mocha": "^2.2.41",
     "@types/node": "^6.0.82",
-    "chai": "^3.5.0",
+    "chai": "^4.2.0",
     "mocha": "^2.3.3",
     "tslint": "^5.5.0",
     "tslint-eslint-rules": "^5.4.0",
