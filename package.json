@@ -52,7 +52,7 @@
     "tslint:quick-fix": "\"node_modules/.bin/tslint\" -c ./tslint.json \"./**/*.ts\" -e \"./node_modules/**\" --fix"
   },
   "devDependencies": {
-    "@types/chai": "^4.0.1",
+    "@types/chai": "^4.1.7",
     "@types/mocha": "^2.2.41",
     "@types/node": "^6.0.82",
     "chai": "^3.5.0",
