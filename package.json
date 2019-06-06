@@ -60,7 +60,7 @@
     "tslint": "^5.5.0",
     "tslint-eslint-rules": "^4.1.1",
     "typescript": "^2.0.3",
-    "vscode": "^1.1.0"
+    "vscode": "^1.1.34"
   },
   "dependencies": {
     "global": "^4.3.2"
